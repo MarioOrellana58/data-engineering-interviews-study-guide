@@ -4,6 +4,8 @@
 
 Data CI/CD validates code, contracts, representative data, backward compatibility, and deployment safety. Runtime observability connects freshness, volume, quality, cost, and lineage to consumer impact. Alerts need an owner and action; otherwise they become background noise.
 
+**Analogy:** Deploying a data model is changing a public road: unit tests inspect the asphalt, compatibility checks protect vehicle widths, and a canary opens one lane before redirecting all traffic.
+
 ```mermaid
 flowchart LR
     PR[Pull request] --> U[Unit + contract tests]
@@ -14,9 +16,9 @@ flowchart LR
     O -->|regression| R[Rollback]
 ```
 
-## Practical example and analogy
+## Solved practical example
 
-Deploying a data model is changing a public road: unit tests inspect the asphalt, compatibility checks protect vehicle widths, and a canary opens one lane before redirecting all traffic.
+A pull request adds a nullable column used by no current consumer. Unit and contract tests pass, lineage review identifies Finance as a critical downstream owner, and a 5% canary shows no freshness or error regression. Approve with Finance acknowledgement, deploy 5% → 25% → 100%, and roll back if error rate rises more than 1% or freshness exceeds the SLO. Removing an existing column without a migration window would be blocked before the canary.
 
 ## Code exercise
 

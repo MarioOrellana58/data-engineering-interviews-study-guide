@@ -4,9 +4,11 @@
 
 Storage choices trade latency, consistency, query flexibility, write rate, operational effort, and cost. Row stores favor selective transactional access; columnar files and warehouses favor scans and aggregation; key-value stores favor known keys; document stores favor evolving aggregates. Parquet row groups, compression, partitioning, and statistics matter as much as file extension.
 
-## Practical example and analogy
+**Analogy:** A warehouse, filing cabinet, and vending machine all store items differently. The warehouse favors bulk movement, the cabinet flexible lookup, and the vending machine extremely fast retrieval of known choices.
 
-A warehouse, filing cabinet, and vending machine all store things. A warehouse is efficient for bulk movement, a filing cabinet supports flexible lookup, and a vending machine makes a small set of items extremely fast to retrieve. Asking for “the best storage” without an access pattern is meaningless.
+## Solved practical example
+
+For append-only clickstream data scanned by date and aggregated across millions of rows, choose Parquet or Delta, partitioned by `event_date`, with 256–512 MB files. Do **not** partition by `customer_id`: 50 million customers would create excessive directories and tiny files. A query for January 2–3 then scans only those two date partitions; customer filtering uses file statistics or clustering inside them.
 
 ## Code exercise
 

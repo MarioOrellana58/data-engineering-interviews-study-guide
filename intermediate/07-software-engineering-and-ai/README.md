@@ -4,9 +4,11 @@
 
 API ingestion must handle pagination, retries, rate limits, evolving schemas, duplicate objects, and resumable checkpoints. Unstructured payloads still need provenance and content hashes. For AI/ML consumers, reproducibility requires retaining source version and transformation version.
 
-## Practical example and analogy
+**Analogy:** Pagination is reading a book whose page numbers can change. A continuation token is the publisher's bookmark; checkpoints and stable IDs prevent lost or duplicated chapters.
 
-Pagination is reading a book whose page numbers can change while you read. A continuation token is a bookmark issued by the publisher; checkpoints and stable IDs keep you from losing or duplicating chapters.
+## Solved practical example
+
+Page 1 returns `(document A, version 1)` and token `t1`. Page 2 repeats A1, adds A2, and ends. The solved ingestion stores A1 and A2 once each, attaches source URL and retrieval time, and finishes with a null checkpoint. If processing stops after page 1, persist `t1` plus the seen `(A,1)` key; resuming neither loses A2 nor duplicates A1. A repeated `t1 → t1` token is an error, not an infinite loop.
 
 ## Code exercise
 

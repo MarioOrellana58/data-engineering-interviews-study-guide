@@ -4,6 +4,8 @@
 
 The grain defines what one fact row represents. Dimensions provide descriptive context; facts provide additive or semi-additive measurements. Keys, late-arriving data, unknown members, and history rules must be explicit. A model that cannot answer its target questions simply is not “normalized” or “denormalized” correctly—it is misfit.
 
+**Analogy:** Grain is the unit printed on a measuring cup. Mixing “one order” with “one order line” in a fact table is like combining liters and individual bottles without a conversion rule.
+
 ```mermaid
 erDiagram
     DIM_CUSTOMER ||--o{ FACT_ORDER_LINE : places
@@ -11,9 +13,9 @@ erDiagram
     DIM_DATE ||--o{ FACT_ORDER_LINE : occurred_on
 ```
 
-## Practical example and analogy
+## Solved practical example
 
-The grain is the unit printed on a measuring cup. Mixing “one order” and “one order line” in the same fact table is like mixing liters and individual bottles without a conversion rule.
+Order `o1` has two lines: two books at $10 and one pen at $3. At one-row-per-order-line grain, the fact table has two rows with revenues 20 and 3, both referencing the same customer/date dimension keys but different product keys. Customer and product names live in dimensions, not facts. Summing `line_revenue` correctly returns the $23 order total.
 
 ## Code exercise
 

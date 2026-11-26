@@ -4,9 +4,11 @@
 
 ML and AI systems depend on reproducible, leakage-free data. A training feature may use only facts available by the label timestamp, including ingestion delay. Feature definitions need versions, lineage, freshness, and parity between batch training and online serving. AI-generated transformations require the same security and review controls as other production code.
 
-## Practical example and analogy
+**Analogy:** Predicting yesterday's match using today's newspaper is not a strong model—it is time travel. Point-in-time joins prevent future knowledge from leaking into training.
 
-Predicting yesterday's match using today's newspaper is not a strong model—it is time travel. Point-in-time joins prevent the model from seeing future knowledge.
+## Solved practical example
+
+A label at January 10 noon considers a January 5 transaction ingested January 5. It excludes a January 6 transaction ingested January 11 because the system did not know it at label time, excludes an event exactly at noon, and excludes January 1 because it falls outside the seven-day window. The solved feature is count `1`, amount `10`, definition version `v3`, plus a deterministic hash of inputs and definition.
 
 ## Code exercise
 

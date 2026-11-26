@@ -4,6 +4,8 @@
 
 An ETL task is production-ready when retries do not corrupt results. Prefer deterministic transformations, stable business keys, checkpoints outside ephemeral workers, atomic publication, and explicit handling for malformed records. An orchestrator coordinates work; it should not hide business logic inside a DAG file.
 
+**Analogy:** Idempotency is an elevator button: pressing it repeatedly should not summon multiple elevators. A retry is expected control flow, not a second business event.
+
 ```mermaid
 sequenceDiagram
     participant O as Orchestrator
@@ -18,9 +20,9 @@ sequenceDiagram
     T-->>P: same final state
 ```
 
-## Practical example and analogy
+## Solved practical example
 
-Idempotency is an elevator button: pressing it repeatedly should not summon multiple elevators. A retry is normal control flow, not an exceptional business event.
+Existing state contains event `a`, amount 2, version time 10:00. A retry batch contains `a`, amount 3, version time 11:00 twice, plus `b`, amount −1. The solved result publishes only `a` with amount 3 and quarantines `b` with reason `negative_amount`. Reprocessing that batch produces the identical published state because `event_id` and version determine the merge.
 
 ## Code exercise
 

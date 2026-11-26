@@ -4,6 +4,8 @@
 
 CDC streams contain inserts, updates, deletes, duplicates, and out-of-order delivery. Correct application requires a source ordering key, tombstone policy, durable checkpoint, and rules for events older than retained state. Airflow schedules bounded work; Spark performs parallel state changes. Neither makes semantics automatic.
 
+**Analogy:** CDC resembles editing a shared document through delayed mail. The postmark—not arrival order—determines which edit is newer, and a deletion is still an edit that must be remembered.
+
 ```mermaid
 flowchart LR
     C[CDC log] --> B[Bounded batch]
@@ -14,9 +16,9 @@ flowchart LR
     M --> W[Commit data + checkpoint]
 ```
 
-## Practical example and analogy
+## Solved practical example
 
-CDC is editing a shared document from delayed mail. The postmark—not arrival order—determines which edit is newer, and a deletion is still an edit that must be remembered.
+Snapshot `a=1` is at LSN 5. The batch arrives as delete `a` at LSN 8, update `a=7` at LSN 7, and insert `b=2` at LSN 6. Sort by source LSN, apply 6 then 7 then 8, and commit snapshot `{b: 2}` with checkpoint 8 atomically. If the worker crashes before commit, replay all three; after commit, checkpoint 8 makes the replay a no-op.
 
 ## Code exercise
 

@@ -4,6 +4,8 @@
 
 Architecture begins with workload and guarantees, not a favorite service. Establish volume, velocity, consumers, freshness, correctness, retention, security, recovery objectives, team skills, and budget. Separate ingestion, durable storage, transformation, serving, and control-plane concerns.
 
+**Analogy:** A data platform resembles a water system: pipe diameter is throughput, tanks provide buffering, filters enforce quality, and meters provide observability. Pumps chosen before demand is known add cost without reliability.
+
 ```mermaid
 flowchart LR
     S[Sources] --> I[Idempotent ingestion]
@@ -15,9 +17,9 @@ flowchart LR
     Q -. observes .-> T
 ```
 
-## Practical example and analogy
+## Solved practical example
 
-Designing a pipeline is like designing a water system. Pipe diameter is throughput, tanks provide buffering, filters enforce quality, and meters provide observability. Adding pumps before knowing demand creates cost without reliability.
+Given 400 GB/day, six-hour freshness, seven-year retention, replay requirements, and no PII, a suitable answer is: hourly batch ingestion → immutable object-storage raw layer partitioned by ingestion date → validated columnar transformations → curated warehouse tables. Keep batch manifests and checksums for replay, use a six-hour RPO and four-hour RTO, and compact small files daily. Streaming is unjustified because the freshness requirement is hours, not seconds.
 
 ## Code exercise
 

@@ -4,6 +4,8 @@
 
 An SLO defines consumer-visible reliability; an error budget controls change velocity. Incident response prioritizes impact, containment, communication, restoration, and learning. Lineage turns a failed asset into a blast radius. Disaster recovery is credible only when restored data is validated through exercises.
 
+**Analogy:** An SLO is a household circuit breaker, not a promise that electricity never fails. It defines tolerable failure and stops risky changes after the budget is consumed.
+
 ```mermaid
 flowchart LR
     M[SLI breach] --> B[Compute blast radius]
@@ -14,9 +16,9 @@ flowchart LR
     V --> P[Blameless corrective actions]
 ```
 
-## Practical example and analogy
+## Solved practical example
 
-An SLO is a household circuit breaker, not a promise that electricity never fails. It defines tolerable failure and forces the system to stop risky changes when the budget is consumed.
+A 99.9% monthly SLO allows about 43.2 bad minutes. A 90-minute freshness incident therefore burns 2.08 monthly budgets. Lineage shows the affected raw table feeds a regulatory Finance report, so declare SEV-1/2 according to company policy, freeze deployments, stop the corrupt producer, communicate every 30 minutes, replay from the last verified offset, and validate Finance totals before closure. Twenty broken sandboxes alone would not justify the same severity.
 
 ## Code exercise
 

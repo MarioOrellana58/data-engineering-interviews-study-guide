@@ -13,6 +13,8 @@ An interview-focused curriculum for Factored's Senior Data Engineer role. It cov
 
 "Basics" means senior foundations, not beginner work. Intermediate labs integrate systems. Advanced labs introduce ambiguity, failure, scale, and competing constraints.
 
+Every topic follows the same compact sequence: explanation with an analogy, a fully solved practical example, a different graded homework exercise, an AI-review prompt, and unit-test commands.
+
 ## Curriculum map
 
 | Interview area | Basics | Intermediate | Advanced |

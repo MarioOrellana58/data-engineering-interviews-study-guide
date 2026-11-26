@@ -4,11 +4,13 @@
 
 Senior interviews begin with experience because one real project can reveal architecture, coding, operations, and leadership depth. Build one story around **context, personal ownership, decisions, measurable results, and reflection**. Replace “large” and “fast” with volumes, latency, cost, users, or incident rates.
 
-## Practical example and analogy
+**Analogy:** A project story is an API: the opening returns a small, stable interface; follow-up questions request deeper fields. Returning the entire database in the first response hides the useful signal.
 
-A project story is an API: the opening gives a small stable interface; interviewer questions request deeper fields. Do not return the entire database in the first response.
+## Solved practical example
 
-Use this 90-second shape: problem → scale → your decision → hardest trade-off → result. Keep implementation, failure, and stakeholder details available for follow-ups.
+> “I owned the ingestion redesign for 18 partners producing 220 million events per day. Daily files made data 14 hours late, so I introduced hourly, idempotent loads into partitioned object storage instead of Kafka; the business needed 90-minute freshness, not seconds, and the team could operate batch reliably. I added source checksums and replay by batch ID. Freshness fell to 42 minutes and failed-load recovery from four hours to 25 minutes. My first partition key was too granular and created small files; I corrected it with daily partitions and compaction.”
+
+Why it works: it states ownership, scale, a decision, rejected complexity, measurable results, and a mistake. Deeper implementation details remain available for follow-ups.
 
 ## Code exercise
 

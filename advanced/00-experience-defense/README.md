@@ -4,9 +4,11 @@
 
 The strongest answer remains precise when challenged. A senior candidate acknowledges uncertainty, separates team outcomes from personal work, and can revise a decision without becoming defensive. Prepare for contradictions: lower latency versus lower cost, strict correctness versus availability, and delivery speed versus platform health.
 
-## Practical example and analogy
+**Analogy:** This is a load test for reasoning. The goal is not to claim that no crack exists; it is to expose limits honestly and show how the system degrades safely.
 
-This is a load test for your reasoning. The goal is not to prevent every crack; it is to reveal limits honestly and show how the system degrades safely.
+## Solved practical example
+
+Challenge: “You said exactly-once, but your S3 sink cannot join the Kafka transaction. Was it actually exactly-once?” Strong answer: “Not end-to-end. Kafka-to-Delta was effectively once because the batch ID and offset range were committed with the Delta transaction. The raw S3 audit copy was at-least-once and deduplicated downstream. I should call the business result exactly-once, not every write. During a timeout we verified the Delta commit by batch ID before retrying.” This correction improves credibility because it narrows the guarantee precisely.
 
 ## Code exercise
 

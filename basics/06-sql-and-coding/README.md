@@ -4,9 +4,24 @@
 
 Senior SQL work starts by defining row grain, duplicate policy, `NULL` behavior, tie-breaking, and filtering order. Window functions preserve row context; aggregation collapses it. Query correctness includes deterministic output and resistance to duplicate source events.
 
-## Practical example and analogy
+**Analogy:** A SQL query is a legal argument: the result is only as sound as the definitions used for evidence. If “latest” has no tie-breaker, the verdict is nondeterministic.
 
-A SQL query is a legal argument: the final result is only as sound as the definitions used for evidence. If “latest” has no tie-breaker, the verdict is nondeterministic.
+## Solved practical example
+
+To keep the newest version of each order, rank events before aggregation:
+
+```sql
+SELECT * EXCLUDE rn
+FROM (
+  SELECT *, ROW_NUMBER() OVER (
+    PARTITION BY order_id ORDER BY updated_at DESC, ingested_at DESC
+  ) AS rn
+  FROM order_events
+)
+WHERE rn = 1;
+```
+
+For two versions tied on `updated_at`, the later `ingested_at` wins. Filtering cancellations happens **after** this step, because an old paid version must not survive a newer cancellation.
 
 ## Code exercise
 

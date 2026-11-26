@@ -4,9 +4,11 @@
 
 Large reconciliations often cannot load both sides into memory. If inputs are sorted by key, a merge walk finds missing and mismatched records in linear time and constant auxiliary memory. The implementation must be lazy and must define duplicate-key behavior.
 
-## Practical example and analogy
+**Analogy:** This is the zipper method: compare the next teeth, advance the smaller key, and never reopen the part already zipped.
 
-It is the zipper method: compare the two next teeth, advance the smaller key, and never reopen the part already zipped.
+## Solved practical example
+
+For left `[(a,1),(b,2),(d,4)]` and right `[(b,X),(c,3),(d,4)]`: `a` is `missing_right`; `b` is a checksum `mismatch`; `c` is `missing_left`; and `d` matches, so emit nothing. Each iterator advances at most once per record. Only the two current records are held, giving `O(n+m)` time and `O(1)` auxiliary memory.
 
 ## Code exercise
 

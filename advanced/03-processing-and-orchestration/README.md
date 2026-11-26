@@ -4,6 +4,8 @@
 
 Exactly-once is an end-to-end property, not a checkbox. Sources need stable offsets, transforms need deterministic semantics, sinks need idempotent or transactional commits, and checkpoints must align with published output. Backpressure protects the system by bounding admitted work.
 
+**Analogy:** Paying a bill and updating the checkbook must be one recoverable action. If a crash occurs between them, the payment identifier—not hope—prevents double payment.
+
 ```mermaid
 sequenceDiagram
     participant S as Source offsets
@@ -15,9 +17,9 @@ sequenceDiagram
     Note over P,T: Crash before commit = replay<br/>Crash after commit = detect batch_id
 ```
 
-## Practical example and analogy
+## Solved practical example
 
-Paying a bill and updating the checkbook must be one recoverable action. If a crash happens between them, the payment identifier—not hope—prevents double payment.
+Checkpoint 100 and capacity 2 receive offsets 101–105. Deterministic batches are `[101,102]`, `[103,104]`, and `[105]`; each batch ID hashes its offset range and input IDs. A sink transaction writes outputs and the end offset together. If batch 2 times out after commit, recovery finds its batch ID and skips it. If it timed out before commit, the same deterministic batch is safe to replay.
 
 ## Code exercise
 

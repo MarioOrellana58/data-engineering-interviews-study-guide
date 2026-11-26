@@ -4,6 +4,8 @@
 
 A safe migration has measurable equivalence, replayable history, bounded dual running, ownership, and rollback. Separate data-plane movement from consumer cutover. Define reconciliation at business grain; row counts alone miss duplicated, swapped, or semantically changed data.
 
+**Analogy:** Migration is replacing a bridge while traffic continues. A temporary parallel bridge and traffic measurements cost money, but less than discovering structural weakness after demolition.
+
 ```mermaid
 flowchart LR
     S[Sources] --> L[Legacy pipeline]
@@ -16,9 +18,9 @@ flowchart LR
     R -->|mismatch| F[Fix and replay]
 ```
 
-## Practical example and analogy
+## Solved practical example
 
-Migration is replacing a bridge while traffic continues. A temporary parallel bridge and traffic measurements are expensive, but far cheaper than discovering structural weakness after demolition.
+For 12 TB of history and 300 GB/day, use four gated phases: (1) backfill immutable raw data and reconcile counts, sums, distinct business keys, and sampled hashes; (2) dual-run seven days; (3) move two low-risk consumers behind a reversible view; (4) cut over after seven consecutive matching runs. Retain the legacy output for 14 days as rollback. A 0.01% row-count tolerance alone is insufficient because equal counts can contain different orders.
 
 ## Code exercise
 

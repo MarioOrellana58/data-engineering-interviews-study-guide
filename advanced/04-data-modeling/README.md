@@ -4,9 +4,11 @@
 
 Valid time answers “when was this true in the business?” System time answers “when did we know it?” Bitemporal models preserve both, allowing reproducible reports after late corrections. Updates close system-time versions without rewriting history.
 
-## Practical example and analogy
+**Analogy:** A weather diary says Monday was rainy; a correction entered Friday says the sensor was wrong. Business time is Monday, while knowledge time is Friday. Both matter when reproducing Tuesday's report.
 
-A weather diary records that Monday was rainy; a correction entered Friday says the Monday sensor was wrong. Business time is Monday. Knowledge time is Friday. Both facts matter when explaining a report generated Tuesday.
+## Solved practical example
+
+On January 2 the system records that customer A was Silver from January 1. On March 1 it learns a correction: A was Bronze from January 15. Querying business date January 20 with knowledge date February 15 returns Silver; the same business date with knowledge date March 2 returns Bronze. The correction closes a system-time interval—it does not overwrite what February's report actually knew.
 
 ## Code exercise
 
