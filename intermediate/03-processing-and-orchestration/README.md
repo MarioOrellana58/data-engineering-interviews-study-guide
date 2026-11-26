@@ -8,12 +8,13 @@ CDC streams contain inserts, updates, deletes, duplicates, and out-of-order deli
 
 ```mermaid
 flowchart LR
-    C[CDC log] --> B[Bounded batch]
-    B --> D{Newer source version?}
-    D -->|yes| M[Merge / tombstone]
-    D -->|duplicate| X[No-op]
-    D -->|too late| Q[Quarantine]
-    M --> W[Commit data + checkpoint]
+    C["CDC log"] --> B["Bounded batch"]
+    B --> D{"Classify by event ID and source LSN"}
+    D -->|"newer"| M["Merge or persist tombstone"]
+    D -->|"exact replay"| X["No-op"]
+    D -->|"conflict"| Q["Quarantine with reason"]
+    M --> W["Atomically commit state and checkpoint"]
+    Q --> W
 ```
 
 ## Solved practical example

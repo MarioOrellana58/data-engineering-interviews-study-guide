@@ -8,12 +8,12 @@ A service-level objective (SLO) defines consumer-visible reliability; an error b
 
 ```mermaid
 flowchart LR
-    M[Service-level indicator (SLI) breach] --> B[Compute blast radius]
-    B --> S[Assign severity + owner]
-    S --> C[Contain]
-    C --> R[Restore / replay]
-    R --> V[Validate consumers]
-    V --> P[Blameless corrective actions]
+    M["Service-level indicator (SLI) breach"] --> B["Compute blast radius"]
+    B --> S["Assign severity and owner"]
+    S --> C["Contain"]
+    C --> R["Restore or replay"]
+    R --> V["Validate affected consumers"]
+    V --> P["Blameless corrective actions"]
 ```
 
 ## Solved practical example

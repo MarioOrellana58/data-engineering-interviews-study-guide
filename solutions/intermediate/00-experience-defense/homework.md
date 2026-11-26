@@ -10,13 +10,13 @@ I redesigned a daily customer-events pipeline that had become both slow and unre
 
 ```mermaid
 flowchart LR
-    S[Operational sources] --> R[(Immutable raw objects)]
-    R --> V[Contract validation]
-    V --> P[Partitioned transformations]
-    P --> C[(Compacted curated tables)]
-    C --> W[Reversible consumer view]
-    M[Manifest and commit log] -. controls .-> P
-    Q[Quality and lineage] -. observes .-> V
+    S["Operational sources"] --> R[("Immutable raw objects")]
+    R --> V["Contract validation"]
+    V --> P["Partitioned transformations"]
+    P --> C[("Compacted curated tables")]
+    C --> W["Reversible consumer view"]
+    M["Manifest and commit log"] -. controls .-> P
+    Q["Quality and lineage"] -. observes .-> V
     Q -. observes .-> C
 ```
 

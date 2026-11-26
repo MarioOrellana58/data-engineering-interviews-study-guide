@@ -8,9 +8,9 @@ The grain defines what one fact row represents. Dimensions provide descriptive c
 
 ```mermaid
 erDiagram
-    DIM_CUSTOMER ||--o{ FACT_ORDER_LINE : places
-    DIM_PRODUCT ||--o{ FACT_ORDER_LINE : contains
-    DIM_DATE ||--o{ FACT_ORDER_LINE : occurred_on
+    DIM_CUSTOMER ||--o{ FACT_ORDER_LINE : has
+    DIM_PRODUCT ||--o{ FACT_ORDER_LINE : appears_in
+    DIM_DATE ||--o{ FACT_ORDER_LINE : groups
 ```
 
 ## Solved practical example

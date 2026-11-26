@@ -8,14 +8,14 @@ A safe migration has measurable equivalence, replayable history, bounded dual ru
 
 ```mermaid
 flowchart LR
-    S[Sources] --> L[Legacy pipeline]
-    S --> N[New lakehouse path]
-    L --> O[(Legacy output)]
-    N --> D[(Delta curated)]
-    O --> R{Reconcile by grain}
+    S["Sources"] --> L["Legacy pipeline"]
+    S --> N["New lakehouse path"]
+    L --> O[("Legacy output")]
+    N --> D[("Delta curated data")]
+    O --> R{"Reconcile by business grain"}
     D --> R
-    R -->|within tolerance| C[Consumer cutover]
-    R -->|mismatch| F[Fix and replay]
+    R -->|"within tolerance"| C["Consumer cutover"]
+    R -->|"mismatch"| F["Fix and replay"]
 ```
 
 ## Solved practical example

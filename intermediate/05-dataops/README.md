@@ -8,12 +8,12 @@ Continuous integration and continuous delivery (CI/CD) for data validates code, 
 
 ```mermaid
 flowchart LR
-    PR[Pull request] --> U[Unit + contract tests]
-    U --> C[Compatibility check]
-    C --> S[Shadow/canary run]
-    S --> P[Promote]
-    P --> O[Service-level indicators + lineage]
-    O -->|regression| R[Rollback]
+    PR["Pull request"] --> U["Unit and contract tests"]
+    U --> C["Compatibility check"]
+    C --> S["Shadow or canary run"]
+    S --> P["Promote in stages"]
+    P --> O["Service-level indicators and lineage"]
+    O -->|"regression"| R["Rollback"]
 ```
 
 ## Solved practical example

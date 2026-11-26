@@ -8,13 +8,13 @@ Multi-tenant architecture must isolate security, performance, cost, and failure 
 
 ```mermaid
 flowchart TB
-    CP[Global control plane] --> EU[EU regional data plane]
-    CP --> US[US regional data plane]
-    EU --> EUS[(EU encrypted storage)]
-    US --> USS[(US encrypted storage)]
-    EU --> O[Global metadata only]
-    US --> O
-    T[Per-tenant quotas + workload pools] -. enforce .-> EU
+    CP["Global control plane"] -. policy and orchestration .-> EU["EU regional data plane"]
+    CP -. policy and orchestration .-> US["US regional data plane"]
+    EU --> EUS[("EU encrypted storage")]
+    US --> USS[("US encrypted storage")]
+    EU -. non-sensitive metadata .-> O["Global metadata only"]
+    US -. non-sensitive metadata .-> O
+    T["Per-tenant quotas and workload pools"] -. enforce .-> EU
     T -. enforce .-> US
 ```
 

@@ -8,13 +8,14 @@ Architecture begins with workload and guarantees, not a favorite service. Establ
 
 ```mermaid
 flowchart LR
-    S[Sources] --> I[Idempotent ingestion]
-    I --> R[(Immutable raw data)]
-    R --> T[Validated transforms]
-    T --> C[(Curated models)]
-    C --> A[Analytics / machine learning (ML) / APIs]
-    Q[Quality + lineage] -. observes .-> I
+    S["Sources"] --> I["Idempotent ingestion"]
+    I --> R[("Immutable raw data")]
+    R --> T["Validated transforms"]
+    T --> C[("Curated models")]
+    C --> A["Analytics, machine learning (ML), and APIs"]
+    Q["Quality and lineage"] -. observes .-> I
     Q -. observes .-> T
+    Q -. observes .-> C
 ```
 
 ## Solved practical example

@@ -8,15 +8,15 @@ A Latin America (LATAM)/United States (US) retailer needs a platform for analyti
 
 ```mermaid
 flowchart LR
-    API[Partner APIs] --> ING[Ingestion]
-    CDC[Database CDC] --> ING
-    ING --> RAW[(Encrypted replay log)]
-    RAW --> DBX[Databricks validation/features]
-    DBX --> SF[(Snowflake analytics)]
-    DBX --> G[(Fraud graph)]
-    DBX --> ML[Point-in-time ML features]
-    AF[Airflow workflow orchestrator] -. coordinates .-> DBX
-    OBS[Quality, lineage, SLOs] -. observes .-> ING
+    API["Partner APIs"] --> ING["Region-scoped ingestion"]
+    CDC["Database CDC"] --> ING
+    ING --> RAW[("Encrypted regional replay log")]
+    RAW --> DBX["Databricks validation and features"]
+    DBX --> SF[("Snowflake analytics")]
+    DBX --> G[("Fraud graph")]
+    DBX --> ML["Point-in-time ML features"]
+    AF["Airflow workflow orchestrator"] -. coordinates .-> DBX
+    OBS["Quality, lineage, and SLOs"] -. observes .-> ING
     OBS -. observes .-> DBX
 ```
 

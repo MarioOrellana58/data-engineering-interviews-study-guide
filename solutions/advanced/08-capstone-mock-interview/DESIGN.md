@@ -12,18 +12,18 @@ Recovery point objective (RPO) and recovery time objective (RTO) are separate fr
 
 ```mermaid
 flowchart LR
-    API[Partner APIs] --> G[Regional ingestion gateway]
-    CDC[Database change data capture] --> G
-    G --> Q[Partitioned durable queue]
-    Q --> RAW[(Encrypted immutable replay objects)]
-    Q --> V[Databricks validation and deduplication]
-    V --> D[(Delta curated tables)]
-    D --> SF[(Snowflake governed analytics)]
-    D --> FS[(Point-in-time feature tables)]
-    D --> GP[Versioned graph projection]
-    GP --> N[(Neo4j fraud serving)]
-    A[Airflow workflow orchestration] -. coordinates .-> V
-    O[Quality, lineage, cost, and SLOs] -. observes .-> G
+    API["Partner APIs"] --> G["Regional ingestion gateway"]
+    CDC["Database change data capture"] --> G
+    G --> Q["Partitioned durable queue"]
+    Q --> RAW[("Encrypted immutable replay objects")]
+    Q --> V["Databricks validation and deduplication"]
+    V --> D[("Delta curated tables")]
+    D --> SF[("Snowflake governed analytics")]
+    D --> FS[("Point-in-time feature tables")]
+    D --> GP["Versioned graph projection"]
+    GP --> N[("Neo4j fraud serving")]
+    A["Airflow workflow orchestration"] -. coordinates .-> V
+    O["Quality, lineage, cost, and SLOs"] -. observes .-> G
     O -. observes .-> D
     O -. observes .-> SF
     O -. observes .-> N
