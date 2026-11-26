@@ -45,6 +45,8 @@ Each topic should remain compact and include:
 
 Expand an acronym on its first use in each document. Prefer a small Mermaid diagram only when it makes a relationship or sequence easier to understand.
 
+Quote Mermaid flowchart node labels, especially labels containing parentheses, slashes, question marks, or plus signs. GitHub's Mermaid parser can otherwise interpret label punctuation as shape syntax. Run the repository integrity tests after changing a diagram.
+
 Homework files intentionally begin incomplete. New tests must collect successfully and fail for the missing behavior—not because of syntax errors, missing fixtures, network access, nondeterminism, or unavailable external services. Validate changed tests against a temporary reference implementation, but do not commit the solution.
 
 ## Validation
