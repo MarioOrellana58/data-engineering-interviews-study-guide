@@ -6,7 +6,13 @@ build-backend = "setuptools.build_meta"
 name = "senior-data-engineer-interview-lab"
 version = "0.1.0"
 description = "Factored-focused senior data engineering interview exercises"
+readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.11"
+
+[project.urls]
+Repository = "https://github.com/MarioOrellana58/data-engineering-interviews-study-guide"
+Issues = "https://github.com/MarioOrellana58/data-engineering-interviews-study-guide/issues"
 
 [project.optional-dependencies]
 study = [

@@ -3,5 +3,17 @@ __pycache__/
 .pytest_cache/
 *.pyc
 .coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+build/
+dist/
 .DS_Store
+Thumbs.db
 *.egg-info/
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/

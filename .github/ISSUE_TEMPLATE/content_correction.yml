@@ -1,0 +1,41 @@
+name: Technical content correction
+description: Report an explanation, analogy, solved example, or acronym that may mislead students.
+title: "[Content]: "
+labels:
+  - documentation
+body:
+  - type: input
+    id: location
+    attributes:
+      label: File and section
+      placeholder: advanced/05-dataops/README.md — Solved practical example
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is inaccurate or unclear?
+      description: Explain the learner impact, not just the preferred wording.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Proposed correction
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Authoritative sources
+      description: Link primary documentation, a standard, or a research paper when possible.
+      placeholder: One source per line
+    validations:
+      required: true
+  - type: checkboxes
+    id: confidentiality
+    attributes:
+      label: Confirmation
+      options:
+        - label: This report contains no confidential interview questions or proprietary employer material.
+          required: true

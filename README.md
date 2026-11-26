@@ -2,6 +2,8 @@
 
 An interview-focused curriculum for Factored's Senior Data Engineer role. It covers the seven areas named in the interview guidance and emphasizes the role's Python, Structured Query Language (SQL), Databricks, Snowflake, Spark/Airflow, cloud, data-quality, security, and graph-data requirements.
 
+This is an independent educational resource. It is not affiliated with or endorsed by Factored, and interview processes may change.
+
 ## How to use it
 
 1. Work in order: `basics`, `intermediate`, then `advanced`.
@@ -32,15 +34,20 @@ The final capstone combines system design, coding, incident response, and an ora
 
 ## Setup
 
+Python 3.11–3.14 is tested in continuous integration (CI).
+
 ```bash
 python -m venv .venv
-# PowerShell
-.venv\Scripts\Activate.ps1
-python -m pip install -e ".[study]"
-pytest --collect-only -q
 ```
 
-Run everything with `pytest -q`. Initial failures are expected because homework files contain deliberate TODOs.
+Activate the environment with `.venv\Scripts\Activate.ps1` on Windows PowerShell or `source .venv/bin/activate` on macOS/Linux. Then run:
+
+```bash
+python -m pip install -e ".[study]"
+python -m pytest --collect-only -q
+```
+
+Run everything with `python -m pytest -q`. Initial failures are expected because homework files contain deliberate TODOs.
 
 ## Scoring
 
@@ -51,3 +58,15 @@ Run everything with `pytest -q`. Initial failures are expected because homework 
 - 15% communication and trade-offs
 
 Treat 85/100 as ready for another mock and 95/100 as interview-ready. A passing test suite is necessary but not sufficient.
+
+## Contributing
+
+Corrections and new exercise proposals are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before opening a pull request. Never submit confidential interview questions or proprietary employer material.
+
+## Security
+
+Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md). Do not disclose credentials or sensitive reports in public issues.
+
+## License
+
+Licensed under the [MIT License](LICENSE).

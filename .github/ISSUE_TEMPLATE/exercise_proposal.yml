@@ -1,0 +1,50 @@
+name: Exercise proposal
+description: Propose a new interview-relevant topic or a substantial extension.
+title: "[Exercise]: "
+labels:
+  - enhancement
+body:
+  - type: dropdown
+    id: level
+    attributes:
+      label: Difficulty level
+      options:
+        - Basics
+        - Intermediate
+        - Advanced
+    validations:
+      required: true
+  - type: input
+    id: area
+    attributes:
+      label: Interview area
+      placeholder: Data architecture, DataOps, SQL and coding, etc.
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Learning objective
+      description: What senior-level judgment or skill should this test?
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Proposed scenario and constraints
+    validations:
+      required: true
+  - type: textarea
+    id: grading
+    attributes:
+      label: How can it be graded deterministically?
+      description: Include expected invariants, edge cases, and failure modes without providing a full solution.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confidentiality
+    attributes:
+      label: Confirmation
+      options:
+        - label: This proposal is original or properly attributed and contains no confidential interview material.
+          required: true

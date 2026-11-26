@@ -1,0 +1,59 @@
+name: Exercise or test bug
+description: Report an exercise, fixture, command, or test that does not work as documented.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping keep the exercises executable. Do not include secrets or confidential interview content.
+  - type: input
+    id: topic
+    attributes:
+      label: Topic path
+      description: Which topic or file is affected?
+      placeholder: intermediate/06-sql-and-coding
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Include the exact command and the smallest reproducible sequence.
+      placeholder: |
+        1. Create and activate the virtual environment
+        2. Install the study extras
+        3. Run ...
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed output
+      description: Paste the relevant error or failing assertion.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system and Python version.
+      placeholder: Windows 11, Python 3.12.8
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I installed the project with `python -m pip install -e ".[study]"`.
+          required: true
+        - label: I removed secrets and personal or proprietary information.
+          required: true
