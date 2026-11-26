@@ -49,3 +49,8 @@ jobs:
 
       - name: Collect exercises
         run: python -m pytest --collect-only -q
+
+      - name: Validate reference solutions
+        env:
+          STUDY_USE_SOLUTIONS: "1"
+        run: python -m pytest -q

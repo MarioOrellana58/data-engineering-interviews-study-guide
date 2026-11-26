@@ -49,6 +49,8 @@ python -m pytest --collect-only -q
 
 Run everything with `python -m pytest -q`. Initial failures are expected because homework files contain deliberate TODOs.
 
+Use [AI_STUDY_COACH_PROMPT.md](AI_STUDY_COACH_PROMPT.md) for progressive hints and interview practice. [SUBMISSION_GUIDE.md](SUBMISSION_GUIDE.md) explains how to present each artifact. After completing a timed attempt, compare it with the testable [reference solutions](solutions/README.md).
+
 ## Scoring
 
 - 40% correctness and tests

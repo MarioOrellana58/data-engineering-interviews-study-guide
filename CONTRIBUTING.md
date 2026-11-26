@@ -52,11 +52,14 @@ Run the checks relevant to your change:
 
 ```bash
 python -m pytest --collect-only -q
+STUDY_USE_SOLUTIONS=1 python -m pytest -q
 python -m pytest path/to/changed/topic/tests -q
 git diff --check
 ```
 
-The complete test suite is expected to fail until every homework is solved. Explain in the pull request how you validated any new or changed exercise.
+The default complete test suite is expected to fail until every homework is solved. The solution-mode suite must pass. Explain in the pull request how you validated any new or changed exercise.
+
+On Windows PowerShell, run solution mode by setting `$env:STUDY_USE_SOLUTIONS="1"` before `python -m pytest -q`.
 
 ## Pull requests
 
