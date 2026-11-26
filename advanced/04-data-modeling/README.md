@@ -2,7 +2,7 @@
 
 ## Topic explanation
 
-Valid time answers “when was this true in the business?” System time answers “when did we know it?” Bitemporal models preserve both, allowing reproducible reports after late corrections. Updates close system-time versions without rewriting history.
+Valid time answers “when was this true in the business?” System time, also called transaction time, answers “when did the database record this version?” It approximates when the system knew something, but not necessarily when a person or organization first learned it. Bitemporal models preserve both timelines, allowing reproducible reports after late corrections. Updates close system-time versions without rewriting history.
 
 **Analogy:** A weather diary says Monday was rainy; a correction entered Friday says the sensor was wrong. Business time is Monday, while knowledge time is Friday. Both matter when reproducing Tuesday's report.
 
@@ -14,7 +14,7 @@ On January 2 the system records that customer A was Silver from January 1. On Ma
 
 Implement `build_bitemporal(changes)` and `as_of(rows, entity_id, valid_at, known_at)`. Changes contain `effective_at`, `recorded_at`, and attributes. Preserve corrections, use half-open intervals in both time axes, and return exactly what was believed at the requested system time.
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; defend storage growth, correction semantics, and indexing/clustering.
 

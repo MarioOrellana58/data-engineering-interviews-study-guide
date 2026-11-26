@@ -23,3 +23,20 @@ def test_cycle_and_page_bound_are_enforced():
 
     with pytest.raises(ValueError, match="cycle"):
         hw.ingest_pages(cyclic, "same", set(), 5)
+
+
+def test_page_bound_returns_a_resumable_checkpoint():
+    calls = []
+    pages = {
+        None: {"items": [{"id": "a", "version": 1, "body": "x"}], "next_token": "t1", "source": "api"},
+        "t1": {"items": [{"id": "b", "version": 1, "body": "y"}], "next_token": "t2", "source": "api"},
+    }
+
+    def fetch(token):
+        calls.append(token)
+        return pages[token]
+
+    result = hw.ingest_pages(fetch, None, set(), max_pages=1)
+    assert calls == [None]
+    assert [(x["id"], x["version"]) for x in result["accepted"]] == [("a", 1)]
+    assert result["next_token"] == "t1"

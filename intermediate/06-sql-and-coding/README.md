@@ -1,4 +1,4 @@
-# SQL and Coding: Sessionization and Funnels
+# Structured Query Language (SQL) and Coding: Sessionization and Funnels
 
 ## Topic explanation
 
@@ -14,7 +14,7 @@ Events at 10:00 `view`, 10:05 `add`, 10:10 `purchase`, and 10:41 `view` form two
 
 Complete `homework.sql`. A new session begins after more than 30 minutes of inactivity. Return one row per user and session with start/end time, event count, whether `view → add_to_cart → purchase` occurred in order, and seconds from first view to qualifying purchase. Duplicate `event_id` rows must be reduced to the latest `ingested_at` first.
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; discuss sort cost, boundary semantics, and scaling by date partitions.
 

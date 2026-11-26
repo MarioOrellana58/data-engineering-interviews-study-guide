@@ -1,4 +1,4 @@
-# Software Engineering and AI: Make Failure Explicit
+# Software Engineering and Artificial Intelligence (AI): Make Failure Explicit
 
 ## Topic explanation
 
@@ -18,7 +18,7 @@ Then inspect your own implementation as if AI generated it: identify one way car
 
 ## AI review
 
-Use `AI_REVIEW_PROMPT.md`; expect OOP/interface, networking, testing, and complexity questions.
+Use `AI_REVIEW_PROMPT.md`; expect object-oriented programming (OOP)/interface, networking, testing, and complexity questions.
 
 ## Unit test
 

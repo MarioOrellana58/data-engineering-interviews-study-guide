@@ -1,4 +1,4 @@
-# AI review prompt
+# Artificial Intelligence (AI) review prompt
 
 Act as a demanding Factored senior data-engineering interviewer. Read this README, `homework.md`, and the pytest output. Do not rewrite the story first.
 

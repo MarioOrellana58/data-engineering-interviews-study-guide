@@ -8,7 +8,7 @@ Lakehouse correctness depends on transaction logs, snapshot isolation, optimisti
 
 ## Solved practical example
 
-A fraud team asks for five-hop paths between accounts, devices, cards, and IPs, while Finance scans 20 TB for monthly totals. Use a Delta/Snowflake analytical source of truth plus a versioned graph projection in Neo4j. Publish projection checkpoints so graph results can be traced to a lakehouse snapshot. Keep 30-day snapshots, set vacuum beyond the longest replay window, and alert on graph projection lag. Moving Finance aggregation into Neo4j would increase cost without improving its scan workload.
+A fraud team asks for five-hop paths between accounts, devices, cards, and Internet Protocol (IP) addresses, while Finance scans 20 terabytes (TB) for monthly totals. Use a Delta/Snowflake analytical source of truth plus a versioned graph projection in Neo4j. Publish projection checkpoints so graph results can be traced to a lakehouse snapshot. If 30 days of Delta time travel are required, configure deleted-file retention accordingly and ensure `VACUUM` does not remove those files; retain the independent raw replay log according to its own recovery policy. Also account for long-running transactions before shortening vacuum retention. Alert on graph projection lag. Moving Finance aggregation into Neo4j would increase cost without improving its scan workload.
 
 ## Code exercise
 
@@ -16,7 +16,7 @@ Implement `storage_strategy(workload)`. Choose relational, Snowflake, Delta/lake
 
 The strategy must prefer graph only for meaningful multi-hop workloads and retain an analytical system for aggregate scans.
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; defend snapshot retention, concurrent writers, and graph synchronization.
 

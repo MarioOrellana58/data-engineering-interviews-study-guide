@@ -6,14 +6,14 @@ from test_support import homework_path
 def run_query():
     con = duckdb.connect()
     con.execute("CREATE TABLE customers(customer_id VARCHAR); INSERT INTO customers VALUES ('c1'), ('c2'), ('c3')")
-    con.execute("""CREATE TABLE order_events(order_id VARCHAR, customer_id VARCHAR, status VARCHAR, amount DECIMAL(10,2), order_at TIMESTAMP, updated_at TIMESTAMP, ingested_at TIMESTAMP)""")
+    con.execute("""CREATE TABLE order_events(source_event_id VARCHAR, order_id VARCHAR, customer_id VARCHAR, status VARCHAR, amount DECIMAL(10,2), order_at TIMESTAMP, updated_at TIMESTAMP, ingested_at TIMESTAMP)""")
     con.execute("""INSERT INTO order_events VALUES
-      ('o1','c1','paid',10,'2026-01-01','2026-01-01 10:00','2026-01-01 10:01'),
-      ('o1','c1','paid',12,'2026-01-01','2026-01-01 11:00','2026-01-01 11:01'),
-      ('o2','c1','paid',8,'2026-01-03','2026-01-03 10:00','2026-01-03 10:01'),
-      ('o2','c1','cancelled',8,'2026-01-03','2026-01-03 11:00','2026-01-03 11:01'),
-      ('o3','c2','paid',12,'2026-01-02','2026-01-02 10:00','2026-01-02 10:01'),
-      ('o3','c2','paid',15,'2026-01-02','2026-01-02 10:00','2026-01-02 10:02')""")
+      ('v1','o1','c1','paid',10,'2026-01-01','2026-01-01 10:00','2026-01-01 10:01'),
+      ('v2','o1','c1','paid',12,'2026-01-01','2026-01-01 11:00','2026-01-01 11:01'),
+      ('v3','o2','c1','paid',8,'2026-01-03','2026-01-03 10:00','2026-01-03 10:01'),
+      ('v4','o2','c1','cancelled',8,'2026-01-03','2026-01-03 11:00','2026-01-03 11:01'),
+      ('v5','o3','c2','paid',12,'2026-01-02','2026-01-02 10:00','2026-01-02 10:01'),
+      ('v6','o3','c2','paid',15,'2026-01-02','2026-01-02 10:00','2026-01-02 10:01')""")
     sql = homework_path(__file__, "homework.sql").read_text(encoding="utf-8")
     return con.execute(sql).fetchall(), [d[0] for d in con.description]
 

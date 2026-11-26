@@ -1,3 +1,3 @@
-# AI review prompt
+# Artificial Intelligence (AI) review prompt
 
-Act as a senior data-platform interviewer. Read the README, `homework.py`, and test output. Score requirements coverage, correctness, scalability, recovery, security, cost awareness, and clarity for 100 points. Challenge one assumption and one technology choice. Ask five oral follow-ups about peak load, backfill, RPO/RTO, PII, and the batch-versus-streaming boundary. Do not supply a replacement solution until the student answers. Below 85 is not interview-ready.
+Act as a senior data-platform interviewer. Read the README, `homework.py`, and test output. Score requirements coverage, correctness, scalability, recovery, security, cost awareness, and clarity for 100 points. Challenge one assumption and one technology choice. Ask five oral follow-ups about peak load, backfill, recovery point objective (RPO)/recovery time objective (RTO), personally identifiable information (PII), and the batch-versus-streaming boundary. Do not supply a replacement solution until the student answers. Below 85 is not interview-ready.

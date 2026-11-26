@@ -9,7 +9,7 @@ def test_transitive_critical_impact_drives_severity_and_freeze():
     slo = {"availability_target": 0.999, "window_minutes": 43200}
     result = hw.assess_incident("raw_orders", observed, slo, lineage)
     assert "finance_report" in result["blast_radius"]
-    assert result["error_budget_burn"] > 1
+    assert result["error_budget_consumed_ratio"] > 1
     assert result["severity"] in {"SEV-1", "SEV-2"}
     assert result["freeze_deployments"] is True
     assert result["replay_from"] == 400

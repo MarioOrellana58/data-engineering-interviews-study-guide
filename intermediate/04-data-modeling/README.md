@@ -2,9 +2,9 @@
 
 ## Topic explanation
 
-SCD Type 2 preserves attribute history with non-overlapping validity intervals and one current row per business key. The difficult cases are duplicate changes, late-arriving changes, precision boundaries, and facts that must join “as of” event time.
+Slowly changing dimension (SCD) Type 2 preserves attribute history with non-overlapping validity intervals and one current row per business key. The difficult cases are duplicate changes, late-arriving changes, precision boundaries, and facts that must join “as of” event time.
 
-**Analogy:** SCD2 resembles passport history. Issuing a new passport does not erase the previous one; it closes its validity interval. Two passports cannot both be current for one identity.
+**Analogy:** Slowly changing dimension Type 2 (SCD2) resembles passport history. Issuing a new passport does not erase the previous one; it closes its validity interval. Two passports cannot both be current for one identity.
 
 ## Solved practical example
 
@@ -14,7 +14,7 @@ For customer `c1`, changes are Bronze on January 1, Silver on February 1, duplic
 
 Implement `build_scd2(changes)`. Changes may arrive out of order. Collapse identical consecutive states, use half-open intervals `[valid_from, valid_to)`, assign deterministic surrogate keys, and mark exactly one current version per customer.
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; explain late-arriving dimensions and the fact-to-dimension as-of join.
 

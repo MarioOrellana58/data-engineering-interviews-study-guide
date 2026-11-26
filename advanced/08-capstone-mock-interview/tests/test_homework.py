@@ -20,11 +20,14 @@ def test_batch_is_secure_deterministic_and_replay_safe():
     assert one["published"] == two["published"]
     assert "ada@example.com" not in str(one["published"]).lower()
     assert all("email" not in row for row in one["published"].values())
+    assert one["published"]["a"]["email_token"]
     assert one["published"]["a"]["source_version"] == 2
     assert len(one["quarantined"]) == 1
     assert one["metrics"]["input_count"] == 3
     replay = hw.process_batch(one["published"], events, "interview-secret")
     assert replay["published"] == one["published"]
+    other_secret = hw.process_batch(existing, events, "rotated-secret")
+    assert other_secret["published"]["a"]["email_token"] != one["published"]["a"]["email_token"]
 
 
 def test_tombstone_and_stale_version_semantics():

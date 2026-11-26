@@ -15,7 +15,7 @@ TODO
 ## Security, governance, and residency
 TODO
 
-## SLOs, observability, and recovery
+## Service-level objectives (SLOs), observability, and recovery
 TODO
 
 ## Cost controls and alternatives

@@ -1,4 +1,4 @@
-# SQL and Coding: Reconcile Streams with Constant Memory
+# Structured Query Language (SQL) and Coding: Reconcile Streams with Constant Memory
 
 ## Topic explanation
 
@@ -16,7 +16,7 @@ Implement generator `reconcile_sorted(left, right)`. Inputs are single-pass sort
 
 Target complexity: `O(n + m)` time and `O(1)` auxiliary memory.
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; explain iterator exhaustion, lower bounds, and how this becomes a distributed reconciliation.
 

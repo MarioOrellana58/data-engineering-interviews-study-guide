@@ -12,14 +12,14 @@ flowchart LR
     I --> R[(Immutable raw data)]
     R --> T[Validated transforms]
     T --> C[(Curated models)]
-    C --> A[Analytics / ML / APIs]
+    C --> A[Analytics / machine learning (ML) / APIs]
     Q[Quality + lineage] -. observes .-> I
     Q -. observes .-> T
 ```
 
 ## Solved practical example
 
-Given 400 GB/day, six-hour freshness, seven-year retention, replay requirements, and no PII, a suitable answer is: hourly batch ingestion → immutable object-storage raw layer partitioned by ingestion date → validated columnar transformations → curated warehouse tables. Keep batch manifests and checksums for replay, use a six-hour RPO and four-hour RTO, and compact small files daily. Streaming is unjustified because the freshness requirement is hours, not seconds.
+Given 400 gigabytes per day (GB/day), six-hour freshness, seven-year retention, replay requirements, and no personally identifiable information (PII), a suitable answer is: hourly batch ingestion → immutable object-storage raw layer partitioned by ingestion date → validated columnar transformations → curated warehouse tables. Keep batch manifests and checksums for replay and compact small files daily. Freshness does not determine disaster-recovery targets: ask the business separately how much data it can lose and how quickly service must return. If it specifies a six-hour recovery point objective (RPO) and four-hour recovery time objective (RTO), design checkpoints and restoration procedures to meet those values. Streaming is unjustified because the normal freshness requirement is hours, not seconds.
 
 ## Code exercise
 
@@ -27,7 +27,7 @@ Implement `design_pipeline(requirements)` in `homework.py`. Return a plan contai
 
 Stretch: explain when your batch design should become streaming and why micro-batch may still win.
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`. Be ready to defend one rejected architecture and estimate peak throughput.
 

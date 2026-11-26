@@ -19,9 +19,9 @@ Order `o1` has two lines: two books at $10 and one pen at $3. At one-row-per-ord
 
 ## Code exercise
 
-Implement `build_star_schema(order_lines)`. Create deterministic surrogate keys, three dimensions, and a fact table at **one row per order line**. Repeated customer/product attributes must not be copied into facts. Preserve an unknown member for missing customer IDs.
+Implement `build_star_schema(order_lines)`. Create deterministic surrogate keys, three dimensions, and a fact table at **one row per order line**. Repeated customer/product attributes must not be copied into facts. Preserve an unknown member for missing customer identifiers (IDs).
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; explain additive measures and how the model handles late-arriving dimensions.
 

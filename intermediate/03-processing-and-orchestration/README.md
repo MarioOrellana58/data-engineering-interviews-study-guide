@@ -1,4 +1,4 @@
-# Processing and Orchestration: CDC, Watermarks, and Backfills
+# Processing and Orchestration: Change Data Capture (CDC), Watermarks, and Backfills
 
 ## Topic explanation
 
@@ -18,13 +18,13 @@ flowchart LR
 
 ## Solved practical example
 
-Snapshot `a=1` is at LSN 5. The batch arrives as delete `a` at LSN 8, update `a=7` at LSN 7, and insert `b=2` at LSN 6. Sort by source LSN, apply 6 then 7 then 8, and commit snapshot `{b: 2}` with checkpoint 8 atomically. If the worker crashes before commit, replay all three; after commit, checkpoint 8 makes the replay a no-op.
+Snapshot `a=1` is at log sequence number (LSN) 5. The batch arrives as delete `a` at LSN 8, update `a=7` at LSN 7, and insert `b=2` at LSN 6. Sort by source LSN, apply 6 then 7 then 8, and commit snapshot `{b: 2}` with checkpoint 8 atomically. If the worker crashes before commit, replay all three; after commit, checkpoint 8 makes the replay a no-op.
 
 ## Code exercise
 
 Implement `apply_cdc(snapshot, events, checkpoint)`. Order by `(source_lsn, event_id)`, ignore exact replays, apply deletes, quarantine events at or below the checkpoint that conflict with current state, and advance the checkpoint only to committed input.
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; defend atomicity between data and checkpoint, plus backfill isolation.
 

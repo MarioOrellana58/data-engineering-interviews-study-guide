@@ -9,7 +9,7 @@ flowchart LR
     TODO --> TODO
 ```
 
-## Scale, capacity, SLO, and cost
+## Scale, capacity, service-level objective (SLO), and cost
 TODO
 
 ## Failure and recovery
