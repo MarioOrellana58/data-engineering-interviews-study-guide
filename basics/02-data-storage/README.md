@@ -24,6 +24,8 @@ Stretch: describe compaction and the small-file problem in `rationale`.
 
 `choose_storage` receives Boolean workload signals such as `point_reads`, `transactions`, and `large_scans`, plus a schema-change rate. Return a dictionary with `technology`, `format`, and at least two workload-specific `reasons`. A transactional point-read workload should choose a relational row store; an analytical scan should choose a columnar format. Do not return the same unexplained choice for every input.
 
+For analytical scans, the schema-change rate must affect the choice or rationale: a stable append-only dataset can use plain Parquet, while frequent controlled evolution may justify a transactional table format such as Delta.
+
 `files_to_scan` receives partition dictionaries containing a `path` and a Python `date`. Return only paths whose dates fall in the inclusive interval `[start, end]`, ordered by date and then path. Do not mutate or rely on the input order. Raise `ValueError` when `start` is after `end`.
 
 ### Example input and expected output

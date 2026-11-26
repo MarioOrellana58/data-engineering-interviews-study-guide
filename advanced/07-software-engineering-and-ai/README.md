@@ -18,7 +18,7 @@ Implement `materialize_features(labels, events, definition_version)`. For each l
 
 Each label has `entity_id`, International Organization for Standardization (ISO) 8601 `label_at`, and a target value. Events have identifiers, entity, event and ingestion timestamps, and amount. For each label, include an event only when it belongs to that entity, falls within `[label_at - 7 days, label_at)`, and was ingested before the label. Return one row per label with the original label fields, `txn_count_7d`, `txn_amount_7d`, `definition_version`, and a nonempty deterministic `feature_hash`.
 
-Input event order must not affect output. Hash stable canonical feature content and version—not Python dictionary order or runtime object identity. A late event whose business time is in the window but ingestion time is after the label must be excluded to prevent knowledge leakage.
+Input event order must not affect output. Exact duplicate event identifiers count once; the same identifier with different content must raise `ValueError`. Hash the label, definition version, feature values, and canonical eligible source-event content—not only aggregates, Python dictionary order, or runtime object identity. This lets two equal aggregates built from different evidence have different fingerprints. A late event whose business time is in the window but ingestion time is after the label must be excluded to prevent knowledge leakage.
 
 ### Example input and expected output
 
@@ -40,7 +40,7 @@ row["definition_version"] == "v2"
 bool(row["feature_hash"]) is True
 ```
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; defend offline/online parity, late data, personally identifiable information (PII), drift, and AI-generated code review.
 

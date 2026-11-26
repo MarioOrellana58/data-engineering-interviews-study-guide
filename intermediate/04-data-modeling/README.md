@@ -20,6 +20,8 @@ Each change contains `customer_id`, effective timestamp `at`, and one or more at
 
 Sort changes by business time before constructing history. If consecutive changes have identical attributes, keep one interval rather than manufacturing a version. Close an interval at the next real change using an exclusive `valid_to`. The final interval has `valid_to = None` and is the only current row for that customer. Surrogate keys may be strings or integers, but they must remain identical when input order changes.
 
+Exact duplicate changes at one timestamp are one observation. Different attribute states for the same customer at the same timestamp are ambiguous and must raise `ValueError`; never manufacture a zero-length interval or let input order select a winner.
+
 ### Example input and expected output
 
 ```python

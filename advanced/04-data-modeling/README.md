@@ -20,6 +20,8 @@ Implement `build_bitemporal(changes)` and `as_of(rows, entity_id, valid_at, know
 
 A later recording can correct an earlier effective period. Do not overwrite the old system-time view; close it and create the newly believed valid-time timeline. `as_of` must filter both axes and return one matching row or `None`. If malformed data creates multiple matches for one point, raise an error rather than select arbitrarily.
 
+An exact duplicate change at the same entity, valid time, and system time is one observation. Different attributes at those identical coordinates are contradictory and must raise `ValueError`. Compare parsed temporal values rather than relying on lexical string ordering. Equivalent timezone-aware instants canonicalize to Coordinated Universal Time (UTC); do not mix timezone-aware and timezone-naive values in one history or query.
+
 ### Example input and expected output
 
 ```python

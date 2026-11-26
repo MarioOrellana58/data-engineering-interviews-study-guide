@@ -32,7 +32,7 @@ Implement `process_events(existing, incoming)`. Deduplicate by `event_id`, keep 
 
 Both arguments are lists of event dictionaries. A valid event has a nonempty `event_id`, a nonnegative numeric `amount`, a three-letter `currency`, and an `updated_at` timestamp in a consistently sortable format. Return `{"published": [...], "rejected": [...]}` without changing either input list or its dictionaries.
 
-Combine existing and incoming data by business key. The newest timestamp wins; an exact retry must not create another row. Normalize valid currency codes to uppercase. Add a readable `reason` to quarantined rows, and order both outputs deterministically so reversing input order does not change the business result.
+Combine existing and incoming data by business key. The newest timestamp wins; an exact retry must not create another row. If two different payloads for one `event_id` share the newest timestamp, raise `ValueError` because no truthful winner exists. Normalize valid currency codes such as United States dollar (USD) and euro (EUR) to uppercase. Timestamps must use the International Organization for Standardization (ISO) 8601 format and include a timezone. Boolean, negative, infinite, and not-a-number amounts are invalid. Add a readable `reason` to quarantined rows, and order both outputs deterministically so reversing input order does not change the business result.
 
 ### Example input and expected output
 

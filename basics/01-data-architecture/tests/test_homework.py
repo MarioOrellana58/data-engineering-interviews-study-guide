@@ -1,3 +1,5 @@
+import pytest
+
 from test_support import load_homework
 
 hw = load_homework(__file__)
@@ -21,3 +23,15 @@ def test_low_latency_pii_changes_the_design():
     assert any(x in controls for x in ("encrypt", "token", "mask"))
     assert plan["rto_minutes"] <= 60
     assert len(plan.get("assumptions", [])) >= 2
+
+
+def test_volume_changes_capacity_plan_even_at_same_freshness():
+    small = hw.design_pipeline({"daily_gb": 5, "freshness_minutes": 1440, "replay": True, "pii": False})
+    large = hw.design_pipeline({"daily_gb": 10_000, "freshness_minutes": 1440, "replay": True, "pii": False})
+    assert large["ingestion_parallelism"] > small["ingestion_parallelism"]
+    assert (large["delivery_mode"], large["target_file_mb"]) != (small["delivery_mode"], small["target_file_mb"])
+
+
+def test_non_finite_volume_is_rejected():
+    with pytest.raises(ValueError):
+        hw.design_pipeline({"daily_gb": float("nan"), "freshness_minutes": 60})

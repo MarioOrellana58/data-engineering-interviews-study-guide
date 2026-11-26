@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
 
+import pytest
+
 from test_support import load_homework
 
 hw = load_homework(__file__)
@@ -27,3 +29,20 @@ def test_freshness_can_block_an_otherwise_valid_batch():
     result = hw.validate_batch(rows, CONTRACT, NOW)
     assert result["publish"] is False
     assert result["metrics"]["freshness_minutes"] >= 240
+
+
+def test_future_and_invalid_numeric_values_are_rejected():
+    rows = [
+        {"id": "future", "amount": 1, "event_at": "2026-01-01T12:01:00+00:00"},
+        {"id": "bool", "amount": True, "event_at": "2026-01-01T11:59:00+00:00"},
+    ]
+    result = hw.validate_batch(rows, CONTRACT, NOW)
+    assert {row["id"] for row in result["rejected"]} == {"future", "bool"}
+
+
+def test_naive_clock_and_invalid_thresholds_are_rejected():
+    with pytest.raises(ValueError, match="timezone"):
+        hw.validate_batch([], CONTRACT, datetime(2026, 1, 1))
+    bad_contract = {**CONTRACT, "max_reject_rate": 1.5}
+    with pytest.raises(ValueError, match="threshold"):
+        hw.validate_batch([], bad_contract, NOW)

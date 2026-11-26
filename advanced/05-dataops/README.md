@@ -30,6 +30,8 @@ Implement `assess_incident(asset, observed, slo, lineage)`. Calculate the error-
 
 Traverse lineage transitively and include the starting asset exactly once. Calculate allowed bad minutes as `(1 - availability_target) * window_minutes`, then divide observed bad minutes by that allowance. Severity must prioritize critical consumer impact and budget consumption, not the raw number of nodes. Cycle detection is required.
 
+Require `0 < availability_target < 1`, a positive window, and nonnegative bad minutes. Reject invalid inputs instead of dividing by zero or producing a misleading negative budget-consumption ratio.
+
 ### Example input and expected output
 
 ```python

@@ -20,7 +20,7 @@ Use the existing headings and write at least 350 words; 500–700 is usually eno
 
 Show one capacity calculation with units and assumptions, not only the final number. Connect the service-level objective, cost, failure, and alternative to the same system. State exactly what you did and what teammates did. The automated test checks structure and evidence signals, while the AI review checks consistency and judgment.
 
-### Example planning input and expected shape
+### Example input and expected output
 
 Do not reuse these facts as personal experience:
 

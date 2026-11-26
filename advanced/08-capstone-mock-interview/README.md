@@ -37,11 +37,13 @@ You have 180 minutes:
 
 `DESIGN.md` should be at least 900 words and must quantify throughput, headroom, storage, recovery point objective (RPO), recovery time objective (RTO), freshness, and cost assumptions. Include a Mermaid diagram and cover regional placement, ingestion, raw replay, Databricks processing, Snowflake serving, graph projection, feature correctness, security, observability, migration, rollback, and rejected alternatives. Record the actual test command and result.
 
-`process_batch(existing, events, pii_secret)` must return `published`, `quarantined`, and `metrics` without mutating inputs. Events contain `event_id`, entity `id`, `op`, and integer `source_version`. Upserts additionally require valid email and finite numeric amount; deletes do not. Order versions per entity, reject malformed rows, ignore stale or replayed versions, apply tombstones, and produce deterministic output independent of event order.
+`process_batch(existing, events, pii_secret)` must return `published`, durable `state`, `tombstones`, `quarantined`, and `metrics` without mutating inputs. `existing` may be the initial visible-row mapping or `result["state"]` from a previous call. Events contain nonempty `event_id`, entity `id`, `op`, and nonnegative exact-integer `source_version`. Upserts additionally require valid email and finite numeric amount; deletes do not. Order versions per entity, reject malformed rows, ignore stale or exact-replayed versions, quarantine identifier/version conflicts, apply durable tombstones, and produce deterministic output independent of event order.
 
 Published rows must contain an `email_token` but no raw email key or value. Generate the token with a keyed cryptographic message-authentication construction over a normalized email. Changing the secret must change the token. In the design, explain secret storage, key versioning, rotation, equality leakage, and why the result remains personal data.
 
-### Example processor input and expected output
+Persist a per-entity version watermark and processed-event fingerprint in `state`. Pass that full state into later batches: a visible-row snapshot alone cannot remember deleted versions and therefore cannot prevent stale resurrection. Include `email_token_version`; if initial rows contain raw email, tokenize and remove it before returning any output. The reference convention accepts `v2:key-material` to publish version `v2`; an unprefixed classroom secret is treated as `v1`. In production, pass the key identifier separately from secret material through a secrets manager rather than encoding both in one string.
+
+### Example input and expected output
 
 ```python
 existing = {
@@ -60,12 +62,14 @@ Expected properties:
 result["published"]["a"]["source_version"] == 2
 result["published"]["a"]["amount"] == 7
 bool(result["published"]["a"]["email_token"]) is True
+result["published"]["a"]["email_token_version"] == "v1"
 "email" not in result["published"]["a"]
 len(result["quarantined"]) == 1
 result["metrics"]["input_count"] == 2
+result["state"]["records"] == result["published"]
 ```
 
-Running the same events again must leave `published` unchanged. Reversing the input list must produce the same complete result, including metrics and quarantine order.
+Running `process_batch(result["state"], events, "local-test-secret")` must leave `published` unchanged. Reversing the original input list against the same original state must produce the same complete result, including metrics and quarantine order.
 
 ### Delivery sequence
 

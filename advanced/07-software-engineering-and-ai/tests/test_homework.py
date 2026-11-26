@@ -1,3 +1,5 @@
+import pytest
+
 from test_support import load_homework
 
 hw = load_homework(__file__)
@@ -21,3 +23,20 @@ def test_result_is_deterministic_across_event_order():
     labels = [{"entity_id": "u", "label_at": "2026-01-10T00:00:00+00:00", "label": 0}]
     events = [{"event_id": str(i), "entity_id": "u", "event_at": f"2026-01-0{i}T00:00:00+00:00", "ingested_at": f"2026-01-0{i}T00:01:00+00:00", "amount": i} for i in (4, 5)]
     assert hw.materialize_features(labels, events, "v1") == hw.materialize_features(labels, list(reversed(events)), "v1")
+
+
+def test_feature_hash_commits_to_input_identity_not_only_aggregates():
+    labels = [{"entity_id": "u", "label_at": "2026-01-10T00:00:00+00:00", "label": 0}]
+    base = {"entity_id": "u", "event_at": "2026-01-05T00:00:00+00:00", "ingested_at": "2026-01-05T00:01:00+00:00", "amount": 5}
+    one = hw.materialize_features(labels, [{**base, "event_id": "a"}], "v1")[0]
+    two = hw.materialize_features(labels, [{**base, "event_id": "b"}], "v1")[0]
+    assert one["txn_count_7d"] == two["txn_count_7d"]
+    assert one["feature_hash"] != two["feature_hash"]
+
+
+def test_duplicate_event_ids_are_deduplicated_or_rejected_on_conflict():
+    labels = [{"entity_id": "u", "label_at": "2026-01-10T00:00:00+00:00", "label": 0}]
+    event = {"event_id": "a", "entity_id": "u", "event_at": "2026-01-05T00:00:00+00:00", "ingested_at": "2026-01-05T00:01:00+00:00", "amount": 5}
+    assert hw.materialize_features(labels, [event, dict(event)], "v1")[0]["txn_count_7d"] == 1
+    with pytest.raises(ValueError, match="conflicting duplicate"):
+        hw.materialize_features(labels, [event, {**event, "amount": 6}], "v1")

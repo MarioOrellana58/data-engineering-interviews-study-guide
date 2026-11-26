@@ -18,9 +18,13 @@ The strategy must prefer graph only for meaningful multi-hop workloads and retai
 
 ### Homework contract
 
-`workload` contains multi-hop depth, percentage of relationship queries, analytical scan volume, concurrent writers, and required time-travel days. Return `technologies`, `consistency_model`, `physical_layout`, `concurrency_control`, `retention_days`, `vacuum_safety`, `graph_projection`, and at least five `validation_metrics`.
+`workload` contains multi-hop depth, percentage of relationship queries, analytical scan volume, concurrent writers, and required time-travel days. Return `technologies`, `consistency_model`, `physical_layout`, `concurrency_control`, `retention_days`, `vacuum_safety`, `raw_replay_retention`, `graph_projection`, and at least five `validation_metrics`.
 
 Choose graph storage only when traversal depth and relationship-query frequency justify projection cost. A graph choice must still include Delta, a lakehouse, or Snowflake for aggregate scans, and `graph_projection` must explain how results trace to an analytical snapshot. Retention must meet or exceed time travel. Vacuum safety must mention both retained files and active readers or transactions.
+
+Concurrent-writer count must affect conflict or maintenance controls. Raw-source replay retention is a separate requirement from table time travel: vacuum safety does not prove that the source can be reconstructed.
+
+Reject negative depth, scan volume, writer count, or retention and require relationship-query percentage to remain between 0 and 100. Non-finite measurements are invalid rather than a signal to choose a default.
 
 ### Example input and expected output
 

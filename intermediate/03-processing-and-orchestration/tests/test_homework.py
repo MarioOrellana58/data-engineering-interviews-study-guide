@@ -27,3 +27,28 @@ def test_replay_is_noop_and_conflicting_old_event_is_quarantined():
     assert result["snapshot"] == snapshot
     assert result["checkpoint"] == 10
     assert result["quarantined"][0]["event_id"] == "old"
+
+
+def test_delete_state_prevents_replay_and_stale_resurrection_across_calls():
+    initial = {"x": {"id": "x", "value": 1, "_lsn": 5, "_event_id": "create"}}
+    delete = {"event_id": "delete", "id": "x", "op": "delete", "source_lsn": 6}
+    deleted = hw.apply_cdc(initial, [delete], checkpoint=5)
+    replay = hw.apply_cdc(deleted["state"], [delete], checkpoint=6)
+    assert replay["snapshot"] == {}
+    assert replay["quarantined"] == []
+
+    stale = {"event_id": "stale", "id": "x", "op": "upsert", "value": 9, "source_lsn": 5}
+    result = hw.apply_cdc(deleted["state"], [stale], checkpoint=6)
+    assert result["snapshot"] == {}
+    assert result["quarantined"][0]["event_id"] == "stale"
+
+
+def test_exact_duplicate_event_is_one_operation_but_identifier_reuse_is_conflict():
+    event = {"event_id": "e1", "id": "x", "op": "upsert", "source_lsn": 1, "value": 1}
+    exact = hw.apply_cdc({}, [event, dict(event)], checkpoint=0)
+    assert exact["snapshot"]["x"]["value"] == 1
+    assert exact["quarantined"] == []
+
+    conflict = hw.apply_cdc({}, [event, {**event, "source_lsn": 2, "value": 2}], checkpoint=0)
+    assert conflict["snapshot"]["x"]["value"] == 1
+    assert conflict["quarantined"][0]["reason"] == "event_id reused with different payload"

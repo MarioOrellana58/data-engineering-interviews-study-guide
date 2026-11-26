@@ -1,3 +1,6 @@
+import math
+
+
 def _blast_radius(asset: str, lineage: dict[str, list[str]]) -> list[str]:
     visited = set()
     pending = [asset]
@@ -11,9 +14,14 @@ def _blast_radius(asset: str, lineage: dict[str, list[str]]) -> list[str]:
 
 
 def assess_incident(asset: str, observed: dict, slo: dict, lineage: dict[str, list[str]]) -> dict:
+    target = float(slo["availability_target"])
+    window = float(slo["window_minutes"])
+    bad_minutes = float(observed["bad_minutes"])
+    if not all(math.isfinite(value) for value in (target, window, bad_minutes)) or not 0 < target < 1 or window <= 0 or bad_minutes < 0:
+        raise ValueError("invalid SLO or observation")
     blast_radius = _blast_radius(asset, lineage)
-    allowed_bad_minutes = (1 - slo["availability_target"]) * slo["window_minutes"]
-    consumed = observed["bad_minutes"] / allowed_bad_minutes if allowed_bad_minutes > 0 else float("inf")
+    allowed_bad_minutes = (1 - target) * window
+    consumed = bad_minutes / allowed_bad_minutes
     critical = sorted(set(blast_radius) & set(observed.get("critical_assets", [])))
 
     if critical and consumed >= 1:

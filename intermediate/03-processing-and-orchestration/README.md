@@ -26,9 +26,9 @@ Implement `apply_cdc(snapshot, events, checkpoint)`. Order by `(source_lsn, even
 
 ### Homework contract
 
-`snapshot` maps entity identifiers to current rows and stores the applied source position in `_lsn`. Events contain `event_id`, `id`, `op`, and `source_lsn`; upserts also contain payload fields. Return `snapshot`, `checkpoint`, and `quarantined` without mutating either input.
+`snapshot` initially maps entity identifiers to current rows and stores the applied log sequence number (LSN) in `_lsn`. It may also be the durable `state` returned by a prior call. Events contain `event_id`, `id`, `op`, and `source_lsn`; upserts also contain payload fields. Return `snapshot`, `tombstones`, `state`, `checkpoint`, and `quarantined` without mutating either input.
 
-Sort events by source position and stable event identifier. An upsert replaces the entity and records its `_lsn`; a delete removes it. Inputs above the checkpoint may advance the returned checkpoint only after their state change is accepted. An event at or below the checkpoint is either an exact no-op replay or a conflicting late event that must be quarantined with a reason.
+Sort events by source position and stable event identifier. An upsert replaces the entity and records its `_lsn`; a delete removes it and persists a tombstone containing its LSN and event identifier. Persist processed-event fingerprints in the durable state: an exact duplicate is one operation, while reusing an `event_id` for a different payload is quarantined. Inputs above the checkpoint may advance the returned checkpoint only after their state change is accepted or deterministically quarantined. An event at or below the checkpoint is either an exact no-op replay or a conflicting late event that must be quarantined with a reason. Pass `result["state"]`, not only the visible snapshot, into the next call so deletes cannot be replayed or resurrected by stale events.
 
 ### Example input and expected output
 
@@ -44,14 +44,15 @@ result = apply_cdc(snapshot, events, checkpoint=4)
 Expected result:
 
 ```python
-{
-    "snapshot": {"b": {"id": "b", "value": 9, "_lsn": 5}},
-    "checkpoint": 6,
-    "quarantined": [],
-}
+result["snapshot"] == {"b": {"id": "b", "value": 9, "_lsn": 5, "_event_id": "e5"}}
+result["tombstones"] == {"a": {"_lsn": 6, "_event_id": "e6"}}
+result["checkpoint"] == 6
+result["quarantined"] == []
+result["state"]["records"] == result["snapshot"]
+result["state"]["checkpoint"] == 6
 ```
 
-The function receives events out of order, so array position must not determine the result.
+The function receives events out of order, so array position must not determine the result. A later call must use `apply_cdc(result["state"], next_events, result["checkpoint"])`; passing only `result["snapshot"]` discards deletion history.
 
 ## Artificial Intelligence (AI) review
 

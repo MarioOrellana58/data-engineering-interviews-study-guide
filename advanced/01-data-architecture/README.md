@@ -30,7 +30,11 @@ Implement `design_platform(requirements)`. Produce regional placement, tenancy m
 
 Inputs include daily event count, peak multiplier, headroom fraction, available regions, an EU-residency flag, recovery targets, tenant count, and budget. Compute `peak_events_per_second = daily_events / 86_400 * peak_factor`, then provision at least `peak * (1 + headroom)`.
 
+Capacity and cost examples use terabytes (TB) when storage volume is expressed in `history_tb` or similar fields.
+
 Return `peak_events_per_second`, `provisioned_events_per_second`, `regional_placement`, `tenancy_model`, at least four `isolation_controls`, encryption/key policy, `failover`, `observability`, and `estimated_monthly_cost`. The failover object must repeat achievable RPO/RTO values. If EU data must remain in the EU but no approved EU region exists, or the design cannot fit the budget, raise `ValueError` rather than violating a hard requirement.
+
+Recovery point objective (RPO), recovery time objective (RTO), peak factor, and tenant count must be positive; daily volume and headroom cannot be negative. Tenant count must influence cost or capacity. Do not claim regional failover readiness unless at least two approved regions exist in that jurisdiction: with only one European Union (EU) region, return an explicit “not configured” gap and `regional_failover_ready.eu = false`.
 
 ### Example input and expected output
 

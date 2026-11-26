@@ -1,3 +1,5 @@
+import pytest
+
 from test_support import load_homework
 
 hw = load_homework(__file__)
@@ -21,3 +23,12 @@ def test_out_of_order_changes_form_non_overlapping_history():
 def test_keys_are_deterministic_across_input_order():
     changes = [{"customer_id": "b", "at": "2026-01-01", "tier": "x"}, {"customer_id": "a", "at": "2026-01-01", "tier": "y"}]
     assert hw.build_scd2(changes) == hw.build_scd2(list(reversed(changes)))
+
+
+def test_conflicting_states_at_same_effective_time_are_rejected():
+    changes = [
+        {"customer_id": "a", "at": "2026-01-01", "tier": "silver"},
+        {"customer_id": "a", "at": "2026-01-01", "tier": "gold"},
+    ]
+    with pytest.raises(ValueError, match="conflicting"):
+        hw.build_scd2(changes)

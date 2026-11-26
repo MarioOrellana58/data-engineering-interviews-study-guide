@@ -20,7 +20,7 @@ Keep the existing three-story headings and write at least 700 words total; 900�
 
 The consistency matrix needs one row per shared fact and one column per story. Reuse a value only when the stories concern the same system; otherwise mark it “not applicable” rather than forcing false consistency. End with questions that invite technical depth you can actually defend.
 
-### Example consistency input and expected shape
+### Example input and expected output
 
 These fictional facts demonstrate structure only:
 

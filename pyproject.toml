@@ -21,7 +21,7 @@ study = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["basics", "intermediate", "advanced"]
+testpaths = ["tests", "basics", "intermediate", "advanced"]
 python_files = ["test_*.py"]
 addopts = "--strict-markers --import-mode=importlib"
 

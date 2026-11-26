@@ -1,3 +1,5 @@
+import pytest
+
 from test_support import load_homework
 
 hw = load_homework(__file__)
@@ -19,3 +21,10 @@ def test_transitive_critical_impact_drives_severity_and_freeze():
 def test_lineage_cycles_do_not_loop_forever():
     result = hw.assess_incident("a", {"bad_minutes": 1, "window_minutes": 100, "critical_assets": [], "last_good_offset": 0}, {"availability_target": 0.9, "window_minutes": 100}, {"a": ["b"], "b": ["a"]})
     assert set(result["blast_radius"]) == {"a", "b"}
+
+
+@pytest.mark.parametrize("target,window,bad", [(1, 60, 1), (0, 60, 1), (0.99, 0, 1), (0.99, 60, -1), (float("nan"), 60, 1)])
+def test_invalid_slo_inputs_are_rejected(target, window, bad):
+    with pytest.raises(ValueError):
+        hw.assess_incident("a", {"bad_minutes": bad, "last_good_offset": 0},
+                           {"availability_target": target, "window_minutes": window}, {})

@@ -21,3 +21,16 @@ def test_plan_has_gated_migration_and_rollback():
 def test_impossible_budget_is_not_silently_accepted():
     with pytest.raises(ValueError):
         hw.migration_plan({"history_tb": 1000, "daily_tb": 50, "rpo_minutes": 1, "rto_minutes": 1, "pii": True, "monthly_budget": 10})
+
+
+@pytest.mark.parametrize("rpo,rto", [(0, 10), (10, 0), (-1, 10)])
+def test_recovery_objectives_must_be_positive(rpo, rto):
+    with pytest.raises(ValueError):
+        hw.migration_plan({"history_tb": 1, "daily_tb": 1, "rpo_minutes": rpo, "rto_minutes": rto, "pii": False, "monthly_budget": 10000})
+
+
+@pytest.mark.parametrize("field,value", [("history_tb", 0), ("daily_tb", 0), ("history_tb", float("nan"))])
+def test_migration_volumes_must_be_positive_and_finite(field, value):
+    req = {"history_tb": 1, "daily_tb": 1, "rpo_minutes": 60, "rto_minutes": 60, "monthly_budget": 10000}
+    with pytest.raises(ValueError):
+        hw.migration_plan({**req, field: value})

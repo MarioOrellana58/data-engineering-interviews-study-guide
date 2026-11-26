@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+import math
 from typing import TypeVar
 
 T = TypeVar("T")
@@ -14,7 +15,17 @@ def retry_call(
     base_delay: float,
     max_delay: float,
 ) -> tuple[T, list[float]]:
-    if max_attempts < 1 or base_delay < 0 or max_delay < 0 or base_delay > max_delay:
+    if (
+        type(max_attempts) is not int
+        or max_attempts < 1
+        or type(base_delay) not in (int, float)
+        or type(max_delay) not in (int, float)
+        or not math.isfinite(base_delay)
+        or not math.isfinite(max_delay)
+        or base_delay < 0
+        or max_delay < 0
+        or base_delay > max_delay
+    ):
         raise ValueError("invalid retry configuration")
 
     delays = []

@@ -20,6 +20,8 @@ The contract contains `required`, `unique`, `max_age_minutes`, and `max_reject_r
 
 Return `accepted`, `rejected`, `publish`, and `metrics`. Metrics must include input and rejection evidence plus `freshness_minutes`, computed from `now` and the newest accepted event. Publication is allowed only when there is usable input, reject rate is within the threshold, and freshness is within the contract.
 
+Require timezone-aware `now` and event timestamps, reject future events, and require `amount` to be a finite nonnegative number (a Boolean is not an amount). `max_age_minutes` must be nonnegative and `max_reject_rate` must be between 0 and 1 inclusive.
+
 ### Example input and expected output
 
 ```python

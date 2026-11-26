@@ -18,7 +18,7 @@ Implement `recommend_layout(table, workload)`. Return a `layout_strategy` plus p
 
 `table` describes `platform`, `size_tb`, column cardinalities, and update volume. `workload` provides filter frequencies plus a platform-specific scan metric. Return `layout_strategy`, `partition_by`, `cluster_by` or `zorder_by`, `target_file_mb`, `compaction_trigger`, `validation_metrics`, and `warnings`.
 
-For Delta, `liquid_clustering` means `partition_by` is empty and clustering includes the dominant date filter. `partitioned_zorder` means date partitioning and a separate `zorder_by`; never return both liquid clustering and partitioning. For Snowflake, users do not create physical partitions: use `snowflake_clustering`, leave `partition_by` empty, and warn about clustering cost. Keep target files between 128 and 1,024 megabytes.
+For Delta, `liquid_clustering` means `partition_by` is empty and clustering includes the dominant date filter. `partitioned_zorder` means date partitioning and a separate `zorder_by`; never return both liquid clustering and partitioning. A small table already scanning at most 10 files may use `unclustered`. For Snowflake, users do not create physical partitions: use `snowflake_clustering`, leave `partition_by` empty, and warn about clustering cost; use `snowflake_no_cluster` when at most 10 percent of micro-partitions are scanned. Keep target files between 128 and 1,024 megabytes. Update volume must influence clustering width, target size, or maintenance guidance.
 
 ### Example input and expected output
 

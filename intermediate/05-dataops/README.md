@@ -30,6 +30,8 @@ Implement `deployment_decision(change, evidence)`. Block breaking schema changes
 
 Accumulate every blocking reason rather than returning after the first failure; reviewers need the complete decision. A nonbreaking change with passing evidence can deploy through at least three stages. Critical consumer owners must appear in approvals. A breaking change without a migration window or a material canary regression must set `deploy` to false even when unit tests pass.
 
+Treat a missing, nonnumeric, infinite, or not-a-number canary delta as invalid evidence and block the deployment; invalid telemetry is not proof of safety.
+
 ### Example input and expected output
 
 ```python

@@ -41,6 +41,42 @@ def test_tombstone_and_stale_version_semantics():
     assert result["metrics"]["stale_count"] == 1
 
 
+def test_durable_tombstone_blocks_stale_resurrection_across_batches():
+    existing = {"x": {"id": "x", "source_version": 5, "email_token": "t", "amount": 1}}
+    deleted = hw.process_batch(existing, [{"event_id": "del", "id": "x", "op": "delete", "source_version": 6}], "secret")
+    stale = {"event_id": "old", "id": "x", "op": "upsert", "source_version": 4, "email": "x@example.com", "amount": 9}
+    replayed = hw.process_batch(deleted["state"], [stale], "secret")
+    assert "x" not in replayed["published"]
+    assert replayed["metrics"]["stale_count"] == 1
+
+
+def test_existing_raw_email_is_sanitized_and_conflicts_are_quarantined():
+    existing = {"x": {"id": "x", "source_version": 2, "email": "X@Example.com", "amount": 1}}
+    conflict = {"event_id": "other", "id": "x", "op": "upsert", "source_version": 2, "email": "other@example.com", "amount": 2}
+    result = hw.process_batch(existing, [conflict], "secret")
+    assert "email" not in result["published"]["x"]
+    assert result["published"]["x"]["email_token_version"] == "v1"
+    assert result["quarantined"][0]["reason"] == "source_version conflicts with existing state"
+
+
+def test_boolean_version_and_amount_are_not_accepted_as_integers():
+    events = [
+        {"event_id": "bad-version", "id": "x", "op": "delete", "source_version": True},
+        {"event_id": "bad-amount", "id": "y", "op": "upsert", "source_version": 1, "email": "y@example.com", "amount": False},
+    ]
+    assert hw.process_batch({}, events, "secret")["metrics"]["quarantined_count"] == 2
+
+
+def test_explicit_key_version_is_published_for_rotation():
+    event = {"event_id": "e", "id": "x", "op": "upsert", "source_version": 1,
+             "email": "x@example.com", "amount": 1}
+    old = hw.process_batch({}, [event], "v1:old-secret")["published"]["x"]
+    new = hw.process_batch({}, [event], "v2:new-secret")["published"]["x"]
+    assert old["email_token_version"] == "v1"
+    assert new["email_token_version"] == "v2"
+    assert old["email_token"] != new["email_token"]
+
+
 def test_design_is_complete_and_quantified():
     text = homework_path(__file__, "DESIGN.md").read_text(encoding="utf-8")
     assert "TODO" not in text

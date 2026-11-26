@@ -20,3 +20,22 @@ def test_recovery_skips_committed_and_builds_bounded_deterministic_batches():
 def test_same_offset_with_distinct_events_is_rejected():
     with pytest.raises(ValueError, match="offset"):
         hw.recover_and_plan([{"event_id": "a", "offset": 1}, {"event_id": "b", "offset": 1}], [], 0, 10)
+
+
+def test_same_event_id_at_different_offsets_is_rejected():
+    with pytest.raises(ValueError, match="multiple offsets"):
+        hw.recover_and_plan([{"event_id": "a", "offset": 1}, {"event_id": "a", "offset": 2}], [], 0, 10)
+
+
+def test_committed_batch_boundary_advances_effective_checkpoint():
+    events = [{"event_id": f"e{i}", "offset": i} for i in range(1, 6)]
+    result = hw.recover_and_plan(events, [{"end_offset": 3, "output_ids": ["e1", "e2", "e3"]}], 1, 10)
+    assert result["checkpoint"] == 3
+    assert result["batches"][0]["start_offset"] == 4
+
+
+def test_exact_duplicate_identity_is_deduplicated_and_conflict_is_rejected():
+    event = {"event_id": "a", "offset": 1, "value": 1}
+    assert hw.recover_and_plan([event, dict(event)], [], 0, 10)["batches"][0]["output_ids"] == ["a"]
+    with pytest.raises(ValueError, match="conflicting payload"):
+        hw.recover_and_plan([event, {**event, "value": 2}], [], 0, 10)

@@ -1,3 +1,5 @@
+import pytest
+
 from test_support import load_homework
 
 hw = load_homework(__file__)
@@ -24,3 +26,11 @@ def test_unknown_customer_and_determinism():
     unknown = [r for r in one["dim_customer"] if r["customer_id"] is None]
     assert len(unknown) == 1
     assert sorted(one["fact_order_line"], key=lambda x: (x["order_id"], x["line_id"])) == sorted(two["fact_order_line"], key=lambda x: (x["order_id"], x["line_id"]))
+
+
+def test_conflicting_dimension_attributes_and_duplicate_grain_are_rejected():
+    conflict = [dict(ROWS[0]), {**ROWS[1], "customer_name": "Different"}]
+    with pytest.raises(ValueError, match="conflicting attributes"):
+        hw.build_star_schema(conflict)
+    with pytest.raises(ValueError, match="duplicate fact grain"):
+        hw.build_star_schema([ROWS[0], dict(ROWS[0])])

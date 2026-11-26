@@ -45,7 +45,7 @@ jobs:
           python -m pip install -e ".[study]"
 
       - name: Compile Python files
-        run: python -m compileall -q basics intermediate advanced test_support.py
+        run: python -m compileall -q tests basics intermediate advanced solutions conftest.py test_support.py
 
       - name: Collect exercises
         run: python -m pytest --collect-only -q

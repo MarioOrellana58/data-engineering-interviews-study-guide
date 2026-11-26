@@ -30,7 +30,7 @@ Keep the headings already present in `homework.md`. Write at least 180 words, bu
 
 The automated test checks headings, length, numbers, ownership language, and a trade-off. It cannot check whether the story is true. Every date, metric, tool, and responsibility must come from your experience.
 
-### Example facts and expected shape
+### Example input and expected output
 
 Do not copy these facts as your experience. They only show the required specificity:
 

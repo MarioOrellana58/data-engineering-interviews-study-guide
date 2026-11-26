@@ -39,6 +39,8 @@ Stretch: explain when your batch design should become streaming and why micro-ba
 - `security_controls`: a list that becomes stronger when `pii` is true;
 - `assumptions`: at least two explicit facts you would confirm with stakeholders.
 
+Also return `ingestion_parallelism` and `target_file_mb`. Volume is not decorative input: a very large daily load must produce more parallelism and may justify micro-batching even when the freshness target alone permits a daily batch.
+
 Reject nonsensical values such as nonpositive freshness. You may return additional fields when they help explain the design.
 
 ### Example input and expected output

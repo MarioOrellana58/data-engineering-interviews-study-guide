@@ -28,3 +28,22 @@ def test_snowflake_plan_uses_cluster_not_user_managed_partitions():
     assert not plan.get("partition_by")
     assert plan.get("cluster_by")
     assert any("cost" in x.lower() for x in plan["warnings"])
+
+
+def test_selective_small_workloads_do_not_pay_for_unnecessary_clustering():
+    table = {"platform": "delta", "size_tb": 0.2, "columns": {"event_date": 30}, "updates_per_day": 0}
+    workload = {"filters": {"event_date": 0.9}, "avg_files_per_query": 4}
+    assert hw.recommend_layout(table, workload)["layout_strategy"] == "unclustered"
+
+    table["platform"] = "snowflake"
+    workload = {"filters": {"event_date": 0.9}, "avg_partitions_scanned_pct": 5}
+    assert hw.recommend_layout(table, workload)["layout_strategy"] == "snowflake_no_cluster"
+
+
+def test_high_update_rate_changes_file_and_clustering_plan():
+    base = {"platform": "delta", "size_tb": 20, "columns": {"event_date": 365, "customer_id": 1_000_000}}
+    workload = {"filters": {"event_date": 0.9, "customer_id": 0.8}, "avg_files_per_query": 5000}
+    low = hw.recommend_layout({**base, "updates_per_day": 10}, workload)
+    high = hw.recommend_layout({**base, "updates_per_day": 10_000_000}, workload)
+    assert high["target_file_mb"] < low["target_file_mb"]
+    assert high.get("cluster_by", []) != low.get("cluster_by", [])

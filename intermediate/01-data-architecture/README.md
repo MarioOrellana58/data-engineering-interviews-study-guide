@@ -32,6 +32,8 @@ Implement `migration_plan(requirements)`. Produce ordered phases with exit crite
 
 The plan must include backfill, parallel or dual running, consumer cutover, and retirement. Reconciliation needs at least four checks that can detect equal-count-but-different-data failures. The estimate must fit the budget or the function must raise `ValueError`; do not silently return an infeasible plan.
 
+Historical volume, daily volume, RPO, and RTO must be positive. Tighter recovery targets must affect the cost estimate; they are constraints, not labels copied into the answer.
+
 ### Example input and expected output
 
 ```python

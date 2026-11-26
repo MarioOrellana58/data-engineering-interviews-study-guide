@@ -27,6 +27,8 @@ Return a dictionary with `fact_order_line`, `dim_customer`, `dim_product`, and `
 
 The same logical input in a different order must produce the same keys and rows. Missing customer identifiers map to exactly one “Unknown” customer member rather than producing a null foreign key or multiple unknown rows.
 
+The fact grain is `(order_id, line_id)`; reject duplicate grain rather than double-counting it. A business identifier must map to one set of dimension attributes in this snapshot. If the same customer or product identifier arrives with conflicting names, raise `ValueError` instead of silently assigning multiple members or choosing by input order.
+
 ### Example input and expected output
 
 ```python

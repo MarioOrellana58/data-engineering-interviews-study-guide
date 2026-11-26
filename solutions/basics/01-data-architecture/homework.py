@@ -1,16 +1,18 @@
 """Reference solution for a requirements-driven pipeline design."""
 
+import math
+
 
 def design_pipeline(requirements: dict) -> dict:
     daily_gb = float(requirements.get("daily_gb", 0))
     freshness = int(requirements.get("freshness_minutes", 0))
-    if daily_gb < 0 or freshness <= 0:
+    if not math.isfinite(daily_gb) or daily_gb < 0 or freshness <= 0:
         raise ValueError("daily_gb must be nonnegative and freshness_minutes positive")
 
     if freshness <= 5:
         delivery_mode = "streaming"
         rpo_minutes, rto_minutes = min(freshness, 5), 30
-    elif freshness <= 60:
+    elif freshness <= 60 or daily_gb >= 5_000:
         delivery_mode = "micro-batch"
         rpo_minutes, rto_minutes = min(freshness, 30), 60
     else:
@@ -29,6 +31,8 @@ def design_pipeline(requirements: dict) -> dict:
         "delivery_mode": delivery_mode,
         "layers": ["raw", "validated", "curated", "serving"],
         "partition_key": "event_date",
+        "ingestion_parallelism": max(1, int(daily_gb // 250) + 1),
+        "target_file_mb": 256 if daily_gb < 1_000 else 512,
         "recovery": recovery,
         "rpo_minutes": rpo_minutes,
         "rto_minutes": rto_minutes,

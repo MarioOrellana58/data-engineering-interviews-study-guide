@@ -18,7 +18,7 @@ Complete `homework.sql`. A new session begins after more than 30 minutes of inac
 
 Produce exactly these columns in order: `user_id`, `session_number`, `session_start`, `session_end`, `event_count`, `completed_funnel`, and `seconds_to_purchase`. Deduplicate before sessionization. Order events deterministically by `event_at` and `event_id`. The first session for each user is 1; a gap of exactly 30 minutes remains in the same session, while a gap greater than 30 minutes starts another.
 
-A funnel completes only when a view is followed by an add-to-cart and then a purchase in the same session. A purchase that occurs first does not count. `seconds_to_purchase` is measured from the qualifying view to the qualifying purchase and is `NULL` when the funnel is incomplete.
+A funnel completes only when a view is followed by an add-to-cart and then a purchase in the same session. “Followed by” means a strictly greater event position after sorting by `(event_at, event_id)`, not merely a greater-or-equal timestamp. Therefore, tied timestamps still have an unambiguous order. A purchase that occurs first does not count. `seconds_to_purchase` is measured from the qualifying view to the qualifying purchase and is `NULL` when the funnel is incomplete.
 
 ### Example input and expected output
 

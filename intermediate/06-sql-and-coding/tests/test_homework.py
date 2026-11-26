@@ -24,3 +24,15 @@ def test_sessionization_and_ordered_funnel():
     assert by_key[("u1", 1)][4:] == (3, True, 600)
     assert by_key[("u1", 2)][4] == 2 and by_key[("u1", 2)][5] is False
     assert by_key[("u2", 1)][5] is False
+
+
+def test_equal_timestamps_use_event_id_as_the_ordering_tiebreaker():
+    con = duckdb.connect()
+    con.execute("CREATE TABLE events(event_id VARCHAR,user_id VARCHAR,event_name VARCHAR,event_at TIMESTAMP,ingested_at TIMESTAMP)")
+    con.execute("""INSERT INTO events VALUES
+      ('1','u','purchase','2026-01-01 10:00','2026-01-01 10:01'),
+      ('2','u','add_to_cart','2026-01-01 10:00','2026-01-01 10:01'),
+      ('3','u','view','2026-01-01 10:00','2026-01-01 10:01')""")
+    sql = homework_path(__file__, "homework.sql").read_text(encoding="utf-8")
+    row = con.execute(sql).fetchone()
+    assert row[5] is False

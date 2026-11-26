@@ -29,7 +29,7 @@ Implement `recover_and_plan(events, committed_batches, checkpoint, capacity)`. I
 
 Each event has a unique `event_id`, numeric source `offset`, and payload. A committed batch exposes at least `output_ids` and an ending offset. Return a dictionary containing the current `checkpoint` and ordered `batches`. Do not mutate or materialize a different result when input order changes.
 
-Reject nonpositive capacity. Reject two distinct event identifiers claiming the same offset because source order is then ambiguous. Exclude events already committed or at/below the checkpoint. Split the remainder into batches of at most `capacity`. Every batch contains a deterministic `batch_id`, `start_offset`, `end_offset`, `input_hash`, and ordered `output_ids`; hashes must cover canonical input content, not Python object identity.
+Reject nonpositive capacity, negative or non-integer offsets, one offset claimed by distinct events, and one `event_id` appearing at multiple offsets. Exact duplicate identities collapse to one event; the same `(offset, event_id)` with different content is a hard conflict. Treat the greatest committed ending offset as part of the effective checkpoint, even if the supplied checkpoint is stale. Exclude events already committed or at/below that effective checkpoint. Split the remainder into batches of at most `capacity`. Every batch contains a deterministic `batch_id`, `start_offset`, `end_offset`, `input_hash`, and ordered `output_ids`; hashes must cover canonical input content, not Python object identity.
 
 ### Example input and expected output
 

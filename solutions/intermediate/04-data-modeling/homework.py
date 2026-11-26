@@ -17,11 +17,24 @@ def build_scd2(changes: list[dict]) -> list[dict]:
     for customer_id in sorted(grouped):
         ordered = sorted(grouped[customer_id], key=lambda row: (row["at"], json.dumps(row, sort_keys=True)))
         versions = []
+        by_time = defaultdict(list)
         for change in ordered:
-            attributes = {key: value for key, value in change.items() if key not in {"customer_id", "at"}}
+            by_time[change["at"]].append(change)
+        for at in sorted(by_time):
+            states = {
+                json.dumps(
+                    {key: value for key, value in change.items() if key not in {"customer_id", "at"}},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+                for change in by_time[at]
+            }
+            if len(states) > 1:
+                raise ValueError(f"conflicting states for {customer_id} at {at}")
+            attributes = json.loads(next(iter(states)))
             if versions and versions[-1]["attributes"] == attributes:
                 continue
-            versions.append({"at": change["at"], "attributes": attributes})
+            versions.append({"at": at, "attributes": attributes})
 
         for index, version in enumerate(versions):
             valid_to = versions[index + 1]["at"] if index + 1 < len(versions) else None

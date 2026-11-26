@@ -16,7 +16,7 @@ Implement `ingest_pages(fetch_page, start_token, seen_versions, max_pages)`. Ass
 
 ### Homework contract
 
-`fetch_page(token)` returns `{"items": [...], "next_token": ..., "source": ...}`. A valid item has `id`, integer `version`, and `body`. Copy the page source into every accepted item. Treat `(id, version)` as the deduplication key, including keys supplied in `seen_versions`; do not mutate that set.
+`fetch_page(token)` returns `{"items": [...], "next_token": ..., "source": ..., "source_url": ..., "retrieved_at": ...}`. A valid item has a nonempty string `id`, exact integer `version`, and `body`. Copy `source`, retrieval URL, and retrieval time into every accepted item, and add a deterministic SHA-256 (Secure Hash Algorithm 256-bit) `content_hash` of the canonical body. If optional provenance is absent, use an explicit stable sentinel rather than the wall clock. Treat `(id, version)` as the deduplication key, including keys supplied in `seen_versions`; do not mutate that set.
 
 Return `accepted`, `quarantined`, and `next_token`. Malformed items are quarantined with enough information to diagnose them. Fetch no more than `max_pages`, and return the unconsumed token when that bound interrupts ingestion. Raise `ValueError` for a repeated continuation token or a nonpositive page bound. Let unexpected exceptions from `fetch_page` propagate.
 
@@ -28,6 +28,8 @@ pages = {
         "items": [{"id": "doc", "version": 1, "body": "old"}],
         "next_token": "next",
         "source": "partner-api",
+        "source_url": "https://partner.example/documents",
+        "retrieved_at": "2026-02-01T12:00:00Z",
     },
     "next": {
         "items": [{"id": "doc", "version": 2, "body": "new"}],
@@ -41,16 +43,18 @@ result = ingest_pages(lambda token: pages[token], None, set(), max_pages=1)
 Expected result after the one-page bound:
 
 ```python
-{
-    "accepted": [{"id": "doc", "version": 1, "body": "old", "source": "partner-api"}],
-    "quarantined": [],
-    "next_token": "next",
-}
+result["accepted"][0]["id"] == "doc"
+result["accepted"][0]["source"] == "partner-api"
+result["accepted"][0]["source_url"] == "https://partner.example/documents"
+result["accepted"][0]["retrieved_at"] == "2026-02-01T12:00:00Z"
+len(result["accepted"][0]["content_hash"]) == 64
+result["quarantined"] == []
+result["next_token"] == "next"
 ```
 
 Calling again with `start_token="next"` and `seen_versions={("doc", 1)}` accepts version 2 and finishes with a null token.
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; explain rate limiting, secrets, schema drift, and how an ML pipeline reproduces a dataset.
 

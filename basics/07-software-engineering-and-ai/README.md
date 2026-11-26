@@ -20,7 +20,7 @@ Then inspect your own implementation as if AI generated it: identify one way car
 
 Call `operation` at most `max_attempts` times. When it raises an exception, call `is_transient(error)`. Re-raise immediately if it returns false; otherwise record the delay that would precede the next attempt. Delay number `n` is `min(base_delay * 2**n, max_delay)`, starting with `n = 0`. Do not actually sleep.
 
-Return `(value, delays)` after success. If every allowed attempt fails, re-raise the final original exception. Reject `max_attempts < 1`, negative delays, or a base delay greater than the maximum.
+Return `(value, delays)` after success. If every allowed attempt fails, re-raise the final original exception. `max_attempts` must be an exact positive integer, not a Boolean. Delays must be finite nonnegative numbers, and the base delay cannot exceed the maximum.
 
 ### Example input and expected output
 
@@ -45,7 +45,7 @@ retry_call(
 
 Changing the exception to `ValueError("bad request")` with a classifier that returns false must raise it after one call and record no delay.
 
-## AI review
+## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; expect object-oriented programming (OOP)/interface, networking, testing, and complexity questions.
 

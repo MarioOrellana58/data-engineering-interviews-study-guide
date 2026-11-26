@@ -22,3 +22,10 @@ def test_partition_pruning_is_inclusive_and_ordered():
     assert hw.files_to_scan(parts, date(2026, 1, 2), date(2026, 1, 3)) == [
         "d=2026-01-02/f.parquet", "d=2026-01-03/f.parquet"
     ]
+
+
+def test_schema_change_rate_affects_analytical_format_choice():
+    stable = hw.choose_storage({"large_scans": True, "schema_changes": "low"})
+    evolving = hw.choose_storage({"large_scans": True, "schema_changes": "high"})
+    assert stable["format"] != evolving["format"]
+    assert "schema" in " ".join(evolving["reasons"]).lower()

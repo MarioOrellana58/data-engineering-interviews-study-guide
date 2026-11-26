@@ -2,8 +2,30 @@ from __future__ import annotations
 
 
 def build_star_schema(order_lines: list[dict]) -> dict:
-    customer_values = {(row.get("customer_id"), row.get("customer_name")) for row in order_lines}
-    product_values = {(row["product_id"], row["product_name"]) for row in order_lines}
+    customers_by_id = {None: "Unknown"}
+    products_by_id = {}
+    seen_grain = set()
+    for row in order_lines:
+        grain = (row["order_id"], row["line_id"])
+        if grain in seen_grain:
+            raise ValueError(f"duplicate fact grain: {grain}")
+        seen_grain.add(grain)
+
+        customer_id = row.get("customer_id")
+        customer_name = row.get("customer_name") or "Unknown"
+        if customer_id is None:
+            customer_name = "Unknown"
+        if customer_id in customers_by_id and customers_by_id[customer_id] != customer_name:
+            raise ValueError(f"conflicting attributes for customer {customer_id}")
+        customers_by_id[customer_id] = customer_name
+
+        product_id, product_name = row["product_id"], row["product_name"]
+        if product_id in products_by_id and products_by_id[product_id] != product_name:
+            raise ValueError(f"conflicting attributes for product {product_id}")
+        products_by_id[product_id] = product_name
+
+    customer_values = set(customers_by_id.items())
+    product_values = set(products_by_id.items())
     dates = {row["date"] for row in order_lines}
 
     customers = sorted(customer_values, key=lambda value: (value[0] is not None, value[0] or ""))
@@ -15,7 +37,7 @@ def build_star_schema(order_lines: list[dict]) -> dict:
     date_keys = {value: index + 1 for index, value in enumerate(ordered_dates)}
 
     dim_customer = [
-        {"customer_sk": customer_keys[customer_id], "customer_id": customer_id, "customer_name": name or "Unknown"}
+        {"customer_sk": customer_keys[customer_id], "customer_id": customer_id, "customer_name": name}
         for customer_id, name in customers
     ]
     dim_product = [

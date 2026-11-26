@@ -21,3 +21,12 @@ def test_breaking_or_regressed_change_is_blocked_with_reasons():
     reasons = " ".join(result["reasons"]).lower()
     assert "breaking" in reasons or "migration" in reasons
     assert "canary" in reasons or "regression" in reasons
+
+
+def test_non_finite_canary_evidence_blocks_deployment():
+    result = hw.deployment_decision(
+        {"breaking": False, "pii": False, "downstream_critical": []},
+        {"tests_passed": True, "lineage_reviewed": True, "canary_error_delta": float("nan")},
+    )
+    assert result["deploy"] is False
+    assert "invalid" in " ".join(result["reasons"]).lower()

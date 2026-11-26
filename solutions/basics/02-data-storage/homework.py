@@ -14,12 +14,15 @@ def choose_storage(workload: dict) -> dict:
             ],
         }
     if workload.get("large_scans"):
+        schema_changes = str(workload.get("schema_changes", "low")).lower()
+        evolving = schema_changes in {"medium", "high", "frequent"}
         return {
-            "technology": "object storage lakehouse",
-            "format": "Parquet",
+            "technology": "object storage lakehouse" if evolving else "object storage",
+            "format": "Delta" if evolving else "Parquet",
             "reasons": [
                 "Columnar encoding reduces bytes read by analytical scans.",
-                "Open files support independent compute and schema evolution.",
+                "A transactional table format supports controlled schema evolution." if evolving
+                else "Plain Parquet keeps a stable append-only dataset simple and portable.",
             ],
         }
     return {
