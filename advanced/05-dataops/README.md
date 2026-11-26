@@ -24,6 +24,35 @@ A 99.9% service-level objective over a 30-day month allows about 43.2 bad minute
 
 Implement `assess_incident(asset, observed, slo, lineage)`. Calculate the error-budget-consumed ratio, transitive critical consumers, severity, immediate actions, communication cadence, replay boundary, and whether deployments freeze. Avoid upgrading severity solely because many noncritical assets exist. A true burn-rate calculation would also require a defined observation window and error ratio.
 
+### Homework contract
+
+`lineage` is an adjacency list from an asset to its direct consumers and may contain cycles. `observed` includes `bad_minutes`, critical assets, and `last_good_offset`; `slo` supplies availability target and window length. Return `blast_radius`, `critical_consumers`, `error_budget_consumed_ratio`, `severity`, `freeze_deployments`, at least four `immediate_actions`, communication cadence, and `replay_from`.
+
+Traverse lineage transitively and include the starting asset exactly once. Calculate allowed bad minutes as `(1 - availability_target) * window_minutes`, then divide observed bad minutes by that allowance. Severity must prioritize critical consumer impact and budget consumption, not the raw number of nodes. Cycle detection is required.
+
+### Example input and expected output
+
+```python
+lineage = {"raw": ["model"], "model": ["report"], "report": []}
+observed = {
+    "bad_minutes": 2,
+    "critical_assets": ["report"],
+    "last_good_offset": 90,
+}
+slo = {"availability_target": 0.99, "window_minutes": 100}
+```
+
+The error allowance is 1 minute, so the consumed ratio is approximately 2. Expected properties:
+
+```python
+set(result["blast_radius"]) == {"raw", "model", "report"}
+result["critical_consumers"] == ["report"]
+1.99 < result["error_budget_consumed_ratio"] < 2.01
+result["severity"] in {"SEV-1", "SEV-2"}
+result["freeze_deployments"] is True
+result["replay_from"] == 90
+```
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; run a live incident with incomplete and changing evidence.

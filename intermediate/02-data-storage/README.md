@@ -14,6 +14,38 @@ A 20-terabyte (TB) Delta event table has 30 million 20-kilobyte (KB) files and 9
 
 Implement `recommend_layout(table, workload)`. Return a `layout_strategy` plus platform-specific partition or clustering choices, target file size, compaction trigger, validation metrics, and warnings. For Delta, choose either `liquid_clustering` with no partitions or `partitioned_zorder`; never combine the two. Reject high-cardinality partitions, account for update frequency, and avoid recommending clustering when scans are already selective enough.
 
+### Homework contract
+
+`table` describes `platform`, `size_tb`, column cardinalities, and update volume. `workload` provides filter frequencies plus a platform-specific scan metric. Return `layout_strategy`, `partition_by`, `cluster_by` or `zorder_by`, `target_file_mb`, `compaction_trigger`, `validation_metrics`, and `warnings`.
+
+For Delta, `liquid_clustering` means `partition_by` is empty and clustering includes the dominant date filter. `partitioned_zorder` means date partitioning and a separate `zorder_by`; never return both liquid clustering and partitioning. For Snowflake, users do not create physical partitions: use `snowflake_clustering`, leave `partition_by` empty, and warn about clustering cost. Keep target files between 128 and 1,024 megabytes.
+
+### Example input and expected output
+
+```python
+table = {
+    "platform": "delta",
+    "size_tb": 5,
+    "columns": {"event_date": 365, "account_id": 8_000_000},
+    "updates_per_day": 100_000,
+}
+workload = {"filters": {"event_date": 0.85, "account_id": 0.4}, "avg_files_per_query": 4_000}
+```
+
+One valid recommendation is:
+
+```python
+{
+    "layout_strategy": "liquid_clustering",
+    "partition_by": [],
+    "cluster_by": ["event_date", "account_id"],
+    "target_file_mb": 512,
+    "compaction_trigger": "compact when small files exceed 20% of bytes",
+    "validation_metrics": ["files scanned", "bytes read", "p95 latency", "optimization cost"],
+    "warnings": ["validate the second clustering key against its maintenance cost"],
+}
+```
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; explain how you would validate the recommendation with profiles and cost evidence.

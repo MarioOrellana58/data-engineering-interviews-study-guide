@@ -16,6 +16,33 @@ Implement generator `reconcile_sorted(left, right)`. Inputs are single-pass sort
 
 Target complexity: `O(n + m)` time and `O(1)` auxiliary memory.
 
+### Homework contract
+
+The function is a generator: it must not read either iterable twice or convert it to a list. Inputs contain unique keys in strictly ascending order. Validate that order while consuming, including after the other side is exhausted. Raise `ValueError` for a duplicate or descending key.
+
+For equal keys, emit a row only when checksums differ. For a key present on one side, emit the appropriate missing status. Every yielded dictionary has `key`, `status`, `left_checksum`, and `right_checksum`, using `None` for the absent side. Output naturally remains sorted because the merge always advances the smaller key.
+
+### Example input and expected output
+
+```python
+left = [("a", "11"), ("c", "33")]
+right = [("b", "22"), ("c", "XX"), ("d", "44")]
+list(reconcile_sorted(left, right))
+```
+
+Expected output:
+
+```python
+[
+    {"key": "a", "status": "missing_right", "left_checksum": "11", "right_checksum": None},
+    {"key": "b", "status": "missing_left", "left_checksum": None, "right_checksum": "22"},
+    {"key": "c", "status": "mismatch", "left_checksum": "33", "right_checksum": "XX"},
+    {"key": "d", "status": "missing_left", "left_checksum": None, "right_checksum": "44"},
+]
+```
+
+Matching checksums produce no row because reconciliation reports differences only.
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; explain iterator exhaustion, lower bounds, and how this becomes a distributed reconciliation.

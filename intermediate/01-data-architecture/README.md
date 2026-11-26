@@ -26,6 +26,45 @@ For 12 terabytes (TB) of history and 300 gigabytes per day (GB/day), use four ga
 
 Implement `migration_plan(requirements)`. Produce ordered phases with exit criteria, backfill strategy, dual-run duration, reconciliation checks, cutover, rollback, security controls, and rough monthly cost. Reject impossible recovery point objective (RPO)/recovery time objective (RTO) combinations rather than hiding them.
 
+### Homework contract
+
+`requirements` includes historical and daily volume, RPO, RTO, a personally identifiable information flag, and monthly budget. Return a dictionary with `phases`, `backfill_strategy`, `dual_run_days`, `reconciliation_checks`, `rollback`, `security_controls`, and `estimated_monthly_cost`. Each phase is a dictionary with a descriptive `name` and nonempty `exit_criteria`.
+
+The plan must include backfill, parallel or dual running, consumer cutover, and retirement. Reconciliation needs at least four checks that can detect equal-count-but-different-data failures. The estimate must fit the budget or the function must raise `ValueError`; do not silently return an infeasible plan.
+
+### Example input and expected output
+
+```python
+requirements = {
+    "history_tb": 10,
+    "daily_tb": 0.5,
+    "rpo_minutes": 120,
+    "rto_minutes": 360,
+    "pii": True,
+    "monthly_budget": 20_000,
+}
+```
+
+Expected shape:
+
+```python
+{
+    "phases": [
+        {"name": "Backfill history", "exit_criteria": ["counts and hashes match", "replay succeeds"]},
+        {"name": "Dual run", "exit_criteria": ["seven consecutive reconciled runs"]},
+        {"name": "Consumer cutover", "exit_criteria": ["canary owners approve", "rollback tested"]},
+    ],
+    "dual_run_days": 7,
+    "reconciliation_checks": ["counts", "distinct keys", "sums", "sampled hashes"],
+    "rollback": "switch the versioned view back to the legacy output",
+    "security_controls": ["encryption", "least privilege", "masked nonproduction data"],
+    "estimated_monthly_cost": 12_000,
+    # plus a backfill strategy
+}
+```
+
+Names and cost formulas may differ; gates, feasibility, and reversibility are required.
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; defend Databricks/Snowflake boundaries and how you prevent endless dual running.

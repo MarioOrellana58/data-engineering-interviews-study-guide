@@ -24,6 +24,35 @@ Snapshot `a=1` is at log sequence number (LSN) 5. The batch arrives as delete `a
 
 Implement `apply_cdc(snapshot, events, checkpoint)`. Order by `(source_lsn, event_id)`, ignore exact replays, apply deletes, quarantine events at or below the checkpoint that conflict with current state, and advance the checkpoint only to committed input.
 
+### Homework contract
+
+`snapshot` maps entity identifiers to current rows and stores the applied source position in `_lsn`. Events contain `event_id`, `id`, `op`, and `source_lsn`; upserts also contain payload fields. Return `snapshot`, `checkpoint`, and `quarantined` without mutating either input.
+
+Sort events by source position and stable event identifier. An upsert replaces the entity and records its `_lsn`; a delete removes it. Inputs above the checkpoint may advance the returned checkpoint only after their state change is accepted. An event at or below the checkpoint is either an exact no-op replay or a conflicting late event that must be quarantined with a reason.
+
+### Example input and expected output
+
+```python
+snapshot = {"a": {"id": "a", "value": 2, "_lsn": 4}}
+events = [
+    {"event_id": "e6", "id": "a", "op": "delete", "source_lsn": 6},
+    {"event_id": "e5", "id": "b", "op": "upsert", "value": 9, "source_lsn": 5},
+]
+result = apply_cdc(snapshot, events, checkpoint=4)
+```
+
+Expected result:
+
+```python
+{
+    "snapshot": {"b": {"id": "b", "value": 9, "_lsn": 5}},
+    "checkpoint": 6,
+    "quarantined": [],
+}
+```
+
+The function receives events out of order, so array position must not determine the result.
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; defend atomicity between data and checkpoint, plus backfill isolation.

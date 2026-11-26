@@ -15,7 +15,7 @@ This is an independent educational resource. It is not affiliated with or endors
 
 "Basics" means senior foundations, not beginner work. Intermediate labs integrate systems. Advanced labs introduce ambiguity, failure, scale, and competing constraints.
 
-Every topic follows the same compact sequence: explanation with an analogy, a fully solved practical example, a different graded homework exercise, an AI-review prompt, and unit-test commands.
+Every topic follows the same sequence: explanation with an analogy, a fully solved practical example, a different graded homework exercise, an explicit homework contract with sample input/output, an AI-review prompt, and unit-test commands.
 
 ## Curriculum map
 

@@ -16,6 +16,36 @@ Implement `storage_strategy(workload)`. Choose relational, Snowflake, Delta/lake
 
 The strategy must prefer graph only for meaningful multi-hop workloads and retain an analytical system for aggregate scans.
 
+### Homework contract
+
+`workload` contains multi-hop depth, percentage of relationship queries, analytical scan volume, concurrent writers, and required time-travel days. Return `technologies`, `consistency_model`, `physical_layout`, `concurrency_control`, `retention_days`, `vacuum_safety`, `graph_projection`, and at least five `validation_metrics`.
+
+Choose graph storage only when traversal depth and relationship-query frequency justify projection cost. A graph choice must still include Delta, a lakehouse, or Snowflake for aggregate scans, and `graph_projection` must explain how results trace to an analytical snapshot. Retention must meet or exceed time travel. Vacuum safety must mention both retained files and active readers or transactions.
+
+### Example input and expected output
+
+```python
+workload = {
+    "multi_hop_depth": 4,
+    "relationship_queries_pct": 60,
+    "aggregate_scan_tb": 12,
+    "concurrent_writers": 8,
+    "time_travel_days": 14,
+}
+```
+
+Expected properties:
+
+```python
+plan["technologies"]  # contains a graph system and an analytical system
+plan["retention_days"] >= 14
+bool(plan["concurrency_control"]) is True
+plan["graph_projection"]["checkpoint"]  # traces the graph to a source snapshot
+len(plan["validation_metrics"]) >= 5
+```
+
+For a one-hop workload with 2% relationship queries and very large scans, the technologies should not default to Neo4j.
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; defend snapshot retention, concurrent writers, and graph synchronization.

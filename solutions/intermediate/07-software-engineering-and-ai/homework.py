@@ -25,7 +25,10 @@ def ingest_pages(
         source = page.get("source")
         for original in page.get("items", []):
             item = deepcopy(original)
-            if not all(field in item for field in ("id", "version", "body")):
+            if (
+                not all(field in item for field in ("id", "version", "body"))
+                or not isinstance(item.get("version"), int)
+            ):
                 item["reason"] = "missing id, version, or body"
                 quarantined.append(item)
                 continue

@@ -27,6 +27,48 @@ Implement `design_pipeline(requirements)` in `homework.py`. Return a plan contai
 
 Stretch: explain when your batch design should become streaming and why micro-batch may still win.
 
+### Homework contract
+
+`requirements` is a dictionary containing `daily_gb`, `freshness_minutes`, `replay`, and `pii`. Return a new dictionary; do not mutate the input. At minimum, the result must contain:
+
+- `delivery_mode`: `batch`, `micro-batch`, or `streaming`, chosen from freshness rather than hard-coded;
+- `layers`: a list that includes a durable raw layer;
+- `partition_key`: a nonempty physical partition choice;
+- `recovery`: a human-readable replay or restoration strategy;
+- `rpo_minutes` and `rto_minutes`: numeric proposals consistent with the requested service;
+- `security_controls`: a list that becomes stronger when `pii` is true;
+- `assumptions`: at least two explicit facts you would confirm with stakeholders.
+
+Reject nonsensical values such as nonpositive freshness. You may return additional fields when they help explain the design.
+
+### Example input and expected output
+
+```python
+requirements = {
+    "daily_gb": 50,
+    "freshness_minutes": 30,
+    "replay": True,
+    "pii": True,
+}
+```
+
+One acceptable result shape is:
+
+```python
+{
+    "delivery_mode": "micro-batch",
+    "layers": ["raw", "validated", "curated"],
+    "partition_key": "event_date",
+    "recovery": "replay immutable raw batches from committed manifests",
+    "rpo_minutes": 30,
+    "rto_minutes": 60,
+    "security_controls": ["encryption", "tokenization", "least privilege"],
+    "assumptions": ["timestamps use Coordinated Universal Time (UTC)", "raw storage is durable"],
+}
+```
+
+The tests assert required properties, not these exact words or architecture choices.
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`. Be ready to defend one rejected architecture and estimate peak throughput.

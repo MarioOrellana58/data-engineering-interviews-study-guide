@@ -14,6 +14,38 @@ On January 2 the system records that customer A was Silver from January 1. On Ma
 
 Implement `build_bitemporal(changes)` and `as_of(rows, entity_id, valid_at, known_at)`. Changes contain `effective_at`, `recorded_at`, and attributes. Preserve corrections, use half-open intervals in both time axes, and return exactly what was believed at the requested system time.
 
+### Homework contract
+
+`build_bitemporal` receives facts for multiple entities. `effective_at` starts valid time; `recorded_at` starts system time. Return rows with `entity_id`, the business attributes, `valid_from`, `valid_to`, `system_from`, and `system_to`. Use half-open intervals: a row is visible when `from <= query_time < to`, with `None` meaning unbounded.
+
+A later recording can correct an earlier effective period. Do not overwrite the old system-time view; close it and create the newly believed valid-time timeline. `as_of` must filter both axes and return one matching row or `None`. If malformed data creates multiple matches for one point, raise an error rather than select arbitrarily.
+
+### Example input and expected output
+
+```python
+changes = [
+    {"entity_id": "x", "effective_at": "2026-01-01", "recorded_at": "2026-01-02", "status": "silver"},
+    {"entity_id": "x", "effective_at": "2026-01-01", "recorded_at": "2026-03-01", "status": "gold"},
+]
+rows = build_bitemporal(changes)
+```
+
+The history must preserve two beliefs:
+
+| status | valid interval | system interval |
+|---|---|---|
+| silver | `[2026-01-01, ∞)` | `[2026-01-02, 2026-03-01)` |
+| gold | `[2026-01-01, ∞)` | `[2026-03-01, ∞)` |
+
+Therefore:
+
+```python
+as_of(rows, "x", "2026-02-01", "2026-02-15")["status"] == "silver"
+as_of(rows, "x", "2026-02-01", "2026-03-02")["status"] == "gold"
+```
+
+The graded fixture also introduces a correction that starts in the middle of an existing valid-time interval.
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; defend storage growth, correction semantics, and indexing/clustering.

@@ -24,6 +24,27 @@ Complete `homework.md` about one production data project. Include:
 
 Then deliver it aloud in 90 seconds and answer five minutes of follow-ups without inventing facts.
 
+### Expected deliverable
+
+Keep the headings already present in `homework.md`. Write at least 180 words, but aim for 250–350 so the opening remains concise and the evidence sections can support follow-ups. The 90-second section should summarize the whole story; later sections should add evidence rather than introduce a different project. Include at least one sentence beginning with “I designed,” “I implemented,” “I led,” or “I decided” so personal ownership is unambiguous.
+
+The automated test checks headings, length, numbers, ownership language, and a trade-off. It cannot check whether the story is true. Every date, metric, tool, and responsibility must come from your experience.
+
+### Example facts and expected shape
+
+Do not copy these facts as your experience. They only show the required specificity:
+
+```text
+Scale: 12 sources, 80 million rows/day, 45-minute freshness target
+My decision: hourly idempotent batches instead of streaming
+Failure: retry duplicated one partition; detected by a uniqueness alert
+Evidence: recovery fell from 110 to 18 minutes; cost rose 6%
+Rejected alternative: Kafka, because the business target was hourly
+Change now: define the publication invariant before selecting tools
+```
+
+The final file should turn those facts into one consistent Situation, Task, Action, Result (STAR) narrative—not a list of unrelated claims.
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md` after the structural test passes. The AI should behave as a skeptical senior interviewer, not a copy editor.

@@ -26,6 +26,42 @@ At 8.64 billion events/day, average load is 100,000 events/s. A 4× peak and 30%
 
 Implement `design_platform(requirements)`. Produce regional placement, tenancy model, capacity with headroom, workload isolation, encryption/key strategy, failover, RPO/RTO, observability, and monthly cost. Detect contradictory residency and failover requirements. Calculate peak events per second from daily volume and peak factor.
 
+### Homework contract
+
+Inputs include daily event count, peak multiplier, headroom fraction, available regions, an EU-residency flag, recovery targets, tenant count, and budget. Compute `peak_events_per_second = daily_events / 86_400 * peak_factor`, then provision at least `peak * (1 + headroom)`.
+
+Return `peak_events_per_second`, `provisioned_events_per_second`, `regional_placement`, `tenancy_model`, at least four `isolation_controls`, encryption/key policy, `failover`, `observability`, and `estimated_monthly_cost`. The failover object must repeat achievable RPO/RTO values. If EU data must remain in the EU but no approved EU region exists, or the design cannot fit the budget, raise `ValueError` rather than violating a hard requirement.
+
+### Example input and expected output
+
+```python
+requirements = {
+    "daily_events": 86_400_000,
+    "peak_factor": 3,
+    "headroom": 0.25,
+    "regions": ["us", "eu"],
+    "eu_must_stay_eu": True,
+    "rpo_minutes": 10,
+    "rto_minutes": 45,
+    "tenants": 80,
+    "budget": 50_000,
+}
+```
+
+Required numeric results are a 3,000 event/second peak and at least 3,750 provisioned events/second. The remaining output should resemble:
+
+```python
+{
+    "regional_placement": {"eu": "eu", "us": "us"},
+    "isolation_controls": ["per-tenant queues", "quotas", "workload pools", "cost tags"],
+    "failover": {"rpo_minutes": 10, "rto_minutes": 45, "eu": "another approved EU region"},
+    "estimated_monthly_cost": 20_000,
+    # tenancy, encryption, observability, and calculated capacity fields
+}
+```
+
+Cost formulas may differ, but assumptions and feasibility must be defensible.
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; defend failure domains, metadata boundaries, and cost allocation.

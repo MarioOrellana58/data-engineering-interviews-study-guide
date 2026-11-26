@@ -12,7 +12,7 @@ flowchart LR
     U --> C[Compatibility check]
     C --> S[Shadow/canary run]
     S --> P[Promote]
-    P --> O[SLIs + lineage]
+    P --> O[Service-level indicators + lineage]
     O -->|regression| R[Rollback]
 ```
 
@@ -23,6 +23,38 @@ A pull request adds a nullable column used by no current consumer. Unit and cont
 ## Code exercise
 
 Implement `deployment_decision(change, evidence)`. Block breaking schema changes without a migration window, failed tests, unresolved critical lineage impact, and excessive canary regressions. Return reasons, required approvals, rollout steps, and rollback trigger.
+
+### Homework contract
+
+`change` describes whether the change is breaking, its migration window, privacy impact, and critical downstream consumers. `evidence` contains test, lineage, and canary results. Return `deploy`, `reasons`, `required_approvals`, `rollout_steps`, and `rollback_trigger`.
+
+Accumulate every blocking reason rather than returning after the first failure; reviewers need the complete decision. A nonbreaking change with passing evidence can deploy through at least three stages. Critical consumer owners must appear in approvals. A breaking change without a migration window or a material canary regression must set `deploy` to false even when unit tests pass.
+
+### Example input and expected output
+
+```python
+change = {
+    "breaking": False,
+    "pii": True,
+    "downstream_critical": ["risk_dashboard"],
+}
+evidence = {
+    "tests_passed": True,
+    "lineage_reviewed": True,
+    "canary_error_delta": 0.002,
+}
+```
+
+Expected properties:
+
+```python
+result["deploy"] is True
+"risk_dashboard" in " ".join(result["required_approvals"])
+len(result["rollout_steps"]) >= 3
+bool(result["rollback_trigger"]) is True
+```
+
+If `breaking` becomes true without `migration_window`, or the error delta becomes `0.2`, the output must block deployment and explain both conditions when both apply.
 
 ## Artificial Intelligence (AI) review
 

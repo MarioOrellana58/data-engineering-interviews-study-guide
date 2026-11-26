@@ -14,6 +14,32 @@ A three-row batch contains one valid row, one duplicate identifier (ID), and one
 
 Implement `validate_batch(rows, contract, now)`. Return accepted rows, rejected rows with reason codes, and metrics. Reject duplicate IDs and invalid/null required fields. Fail the entire batch when rejection rate exceeds the contract threshold or freshness is violated. Do not silently coerce bad values.
 
+### Homework contract
+
+The contract contains `required`, `unique`, `max_age_minutes`, and `max_reject_rate`. Validate rows in input order without mutating them. A null required value is missing. Accept the first valid occurrence of a unique key and reject later occurrences. Each rejected row needs a nonempty `reason`.
+
+Return `accepted`, `rejected`, `publish`, and `metrics`. Metrics must include input and rejection evidence plus `freshness_minutes`, computed from `now` and the newest accepted event. Publication is allowed only when there is usable input, reject rate is within the threshold, and freshness is within the contract.
+
+### Example input and expected output
+
+```python
+from datetime import datetime, timezone
+
+contract = {
+    "required": ["id", "amount", "event_at"],
+    "unique": "id",
+    "max_age_minutes": 30,
+    "max_reject_rate": 0.25,
+}
+rows = [
+    {"id": "a", "amount": 4, "event_at": "2026-02-01T11:50:00+00:00"},
+    {"id": "b", "amount": None, "event_at": "2026-02-01T11:55:00+00:00"},
+]
+result = validate_batch(rows, contract, datetime(2026, 2, 1, 12, 0, tzinfo=timezone.utc))
+```
+
+Expected properties are one accepted row, one rejected row with a reason, `reject_rate == 0.5`, `freshness_minutes == 10`, and `publish is False` because the rejection threshold was exceeded.
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; defend thresholds, alert ownership, and what happens after a failed gate.

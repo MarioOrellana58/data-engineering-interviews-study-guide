@@ -14,6 +14,30 @@ Opening: “I redesigned a Spark pipeline processing 3 terabytes per day (TB/day
 
 Complete `homework.md` for one system you personally shipped. Include a Mermaid diagram, capacity calculation, SLO, cost or resource constraint, serious failure, rejected alternative, stakeholder conflict, and your exact contribution. Add a “question map” showing which parts invite deeper Structured Query Language (SQL), Spark, storage, modeling, or DataOps questions.
 
+### Expected deliverable
+
+Use the existing headings and write at least 350 words; 500–700 is usually enough for a useful deep dive. The opening should take about 90 seconds aloud. The remaining sections are the evidence bank for follow-ups. Your diagram must show sources, durable boundaries, processing, publication, and at least one operational control or failure boundary.
+
+Show one capacity calculation with units and assumptions, not only the final number. Connect the service-level objective, cost, failure, and alternative to the same system. State exactly what you did and what teammates did. The automated test checks structure and evidence signals, while the AI review checks consistency and judgment.
+
+### Example planning input and expected shape
+
+Do not reuse these facts as personal experience:
+
+```text
+Average: 120 million events/day ÷ 86,400 = 1,389 events/second
+Peak assumption: 5× average; headroom: 25%
+Provisioned target: 1,389 × 5 × 1.25 = 8,681 events/second
+SLO: 60-minute freshness at the 95th percentile
+Cost constraint: less than $18,000/month
+Failure: sink timeout after commit; recovery checks a batch manifest
+Rejected alternative: global cluster resize; only two keys were skewed
+My contribution: profiling, salting design, reconciliation, rollout gates
+Recovery point objective (RPO): 15 minutes
+```
+
+The question map should branch from those claims, for example: “5× peak → source evidence → queue capacity → backpressure → cost.”
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md` for a 20-minute branching interview. Answers must remain consistent with the written facts.

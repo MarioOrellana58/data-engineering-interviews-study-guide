@@ -38,9 +38,10 @@ Each topic should remain compact and include:
 1. A technically precise explanation with an analogy.
 2. A fully solved practical example.
 3. A different, challenging homework exercise.
-4. An artificial intelligence (AI) review rubric in `AI_REVIEW_PROMPT.md`.
-5. A student-owned homework file.
-6. Tests and an exact command for running them.
+4. An explicit input/output contract, required invariants, and an example distinct from the graded fixture.
+5. An artificial intelligence (AI) review rubric in `AI_REVIEW_PROMPT.md`.
+6. A student-owned homework file.
+7. Tests and an exact command for running them.
 
 Expand an acronym on its first use in each document. Prefer a small Mermaid diagram only when it makes a relationship or sequence easier to understand.
 

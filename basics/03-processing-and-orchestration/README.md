@@ -28,6 +28,37 @@ Existing state contains event `a`, amount 2, version time 10:00. A retry batch c
 
 Implement `process_events(existing, incoming)`. Deduplicate by `event_id`, keep the record with the newest `updated_at`, reject invalid amounts, normalize currency casing, and return deterministic output. Reprocessing the same input must not change the result.
 
+### Homework contract
+
+Both arguments are lists of event dictionaries. A valid event has a nonempty `event_id`, a nonnegative numeric `amount`, a three-letter `currency`, and an `updated_at` timestamp in a consistently sortable format. Return `{"published": [...], "rejected": [...]}` without changing either input list or its dictionaries.
+
+Combine existing and incoming data by business key. The newest timestamp wins; an exact retry must not create another row. Normalize valid currency codes to uppercase. Add a readable `reason` to quarantined rows, and order both outputs deterministically so reversing input order does not change the business result.
+
+### Example input and expected output
+
+```python
+existing = [
+    {"event_id": "a", "amount": 5, "currency": "USD", "updated_at": "2026-01-01T10:00:00Z"}
+]
+incoming = [
+    {"event_id": "a", "amount": 7, "currency": "usd", "updated_at": "2026-01-01T11:00:00Z"},
+    {"event_id": "b", "amount": -2, "currency": "EUR", "updated_at": "2026-01-01T11:00:00Z"},
+]
+```
+
+Expected business result:
+
+```python
+{
+    "published": [
+        {"event_id": "a", "amount": 7, "currency": "USD", "updated_at": "2026-01-01T11:00:00Z"}
+    ],
+    "rejected": [
+        {"event_id": "b", "amount": -2, "currency": "EUR", "updated_at": "2026-01-01T11:00:00Z", "reason": "..."}
+    ],
+}
+```
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; expect questions about partial writes, retries, backfills, and task boundaries.

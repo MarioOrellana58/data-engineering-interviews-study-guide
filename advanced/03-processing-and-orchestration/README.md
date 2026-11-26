@@ -25,6 +25,44 @@ Checkpoint 100 and capacity 2 receive offsets 101–105. Deterministic batches a
 
 Implement `recover_and_plan(events, committed_batches, checkpoint, capacity)`. Ignore committed event IDs, order source offsets, split deterministic bounded batches, reject offset conflicts, and attach an atomic commit record containing batch ID, offset range, input hash, and output IDs.
 
+### Homework contract
+
+Each event has a unique `event_id`, numeric source `offset`, and payload. A committed batch exposes at least `output_ids` and an ending offset. Return a dictionary containing the current `checkpoint` and ordered `batches`. Do not mutate or materialize a different result when input order changes.
+
+Reject nonpositive capacity. Reject two distinct event identifiers claiming the same offset because source order is then ambiguous. Exclude events already committed or at/below the checkpoint. Split the remainder into batches of at most `capacity`. Every batch contains a deterministic `batch_id`, `start_offset`, `end_offset`, `input_hash`, and ordered `output_ids`; hashes must cover canonical input content, not Python object identity.
+
+### Example input and expected output
+
+```python
+events = [
+    {"event_id": "e12", "offset": 12, "value": "b"},
+    {"event_id": "e11", "offset": 11, "value": "a"},
+    {"event_id": "e13", "offset": 13, "value": "c"},
+]
+result = recover_and_plan(events, committed_batches=[], checkpoint=10, capacity=2)
+```
+
+Expected structure:
+
+```python
+{
+    "checkpoint": 10,
+    "batches": [
+        {
+            "start_offset": 11, "end_offset": 12,
+            "output_ids": ["e11", "e12"],
+            "batch_id": "<deterministic hash>", "input_hash": "<deterministic hash>",
+            # atomic commit description
+        },
+        {
+            "start_offset": 13, "end_offset": 13,
+            "output_ids": ["e13"],
+            "batch_id": "<deterministic hash>", "input_hash": "<deterministic hash>",
+        },
+    ],
+}
+```
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; explain crash points, poison records, and what “exactly once” means to the business.

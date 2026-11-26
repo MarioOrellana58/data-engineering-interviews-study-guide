@@ -16,6 +16,35 @@ Implement `retry_call`. It must retry only exceptions approved by `is_transient`
 
 Then inspect your own implementation as if AI generated it: identify one way careless retry logic could create a data or availability incident.
 
+### Homework contract
+
+Call `operation` at most `max_attempts` times. When it raises an exception, call `is_transient(error)`. Re-raise immediately if it returns false; otherwise record the delay that would precede the next attempt. Delay number `n` is `min(base_delay * 2**n, max_delay)`, starting with `n = 0`. Do not actually sleep.
+
+Return `(value, delays)` after success. If every allowed attempt fails, re-raise the final original exception. Reject `max_attempts < 1`, negative delays, or a base delay greater than the maximum.
+
+### Example input and expected output
+
+```python
+attempts = iter([TimeoutError("temporary"), "done"])
+
+def operation():
+    value = next(attempts)
+    if isinstance(value, Exception):
+        raise value
+    return value
+
+retry_call(
+    operation,
+    lambda error: isinstance(error, TimeoutError),
+    max_attempts=3,
+    base_delay=1,
+    max_delay=8,
+)
+# ("done", [1])
+```
+
+Changing the exception to `ValueError("bad request")` with a classifier that returns false must raise it after one call and record no delay.
+
 ## AI review
 
 Use `AI_REVIEW_PROMPT.md`; expect object-oriented programming (OOP)/interface, networking, testing, and complexity questions.

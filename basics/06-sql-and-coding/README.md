@@ -32,6 +32,31 @@ Complete `homework.sql`. From `order_events`, keep the latest event per `order_i
 
 Rank customers by revenue descending using dense rank. Break event-version ties by `updated_at`, then `ingested_at`, then `source_event_id`. Preserve customers with zero valid orders using the `customers` table.
 
+### Homework contract
+
+Write one DuckDB-compatible query and keep the exact output column order. First reduce `order_events` to one current row per `order_id`; only then filter to `paid`. Aggregate those current paid orders at customer grain, left join from `customers`, convert missing counts and revenue to zero, and rank the final customer totals. `last_order_at` may be `NULL` for a customer with no valid orders.
+
+Do not edit the fixture tables or tests. The query must end with exactly one result set and deterministic customer metrics.
+
+### Example input and expected output
+
+For customers `c1` and `c2`:
+
+| source_event_id | order_id | customer_id | status | amount | updated_at |
+|---|---|---|---|---:|---|
+| v1 | o1 | c1 | paid | 5 | 10:00 |
+| v2 | o1 | c1 | cancelled | 5 | 11:00 |
+| v3 | o2 | c1 | paid | 9 | 12:00 |
+
+The current state of `o1` is cancelled, so it contributes nothing. The expected final rows are conceptually:
+
+| customer_id | order_count | gross_revenue | last_order_at | revenue_rank |
+|---|---:|---:|---|---:|
+| c1 | 1 | 9 | time of o2 | 1 |
+| c2 | 0 | 0 | NULL | 2 |
+
+This example omits the additional timestamp tie-break columns for readability; your query must still use all three.
+
 ## Artificial Intelligence (AI) review
 
 Use `AI_REVIEW_PROMPT.md`; explain logical query order and the cost of each window/sort.
